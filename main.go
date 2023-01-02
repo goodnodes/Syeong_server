@@ -10,8 +10,8 @@ import (
 )
 
 func main() {
-	// config 설정 추가
-	// logger 설정 추가
+	// config 설정 추가 필요
+	// logger 설정 추가 필요
 
 	// 원래는 환경변수를 config.toml 파일에서 받아와야 함
 
