@@ -8,12 +8,24 @@ import (
 	// "go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	// "go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UserModel struct {
 	Client *mongo.Client
 	UserCollection *mongo.Collection
+}
+
+type User struct {
+	ID primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	PrivateInfo struct {
+		Pnum string `bson:"pnum" json:"pnum"`
+		NickName string `bson:"nickname" json:"nickname"`
+		CreatedAt string `bson:"createdat" json:"createdat"`
+		RefreshToken string `bson:"refreshtoken" json:"refreshtoken"`
+		AccessToken string `bson:"accesstoken" json:"accesstoken"`
+	}
+	MyPools []Pool `bson:"mypools" json:"mypools"`
 }
 
 func GetUserModel(db, host, model string) (*UserModel, error) {

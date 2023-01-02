@@ -18,9 +18,11 @@ type ReviewModel struct {
 
 type Review struct {
 	// 이렇게 하면 json으로 keyword 하고 text만 받아도 제대로 Object id가 생성되는지 확인해봐야함
-	ID primitive.ObjectID `bson:"_id,omitempty"`
-	Keyword string `bson:"keyword" json:"keyword"`
-	Text string `bson:"text" json:"text"`
+	ID primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	PoolId primitive.ObjectID `bson:"poolid" json:"poolid"`
+	UserId primitive.ObjectID `bson:"userid" json:"userid"`
+	KeywordReview string `bson:"keywordreview" json:"keywordreview"`
+	TextReview string `bson:"textreview" json:"textreview"`
 }
 
 // Review를 다루는 model 객체를 만들어 return 해주는 함수
