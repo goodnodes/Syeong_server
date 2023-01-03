@@ -43,6 +43,8 @@ func (p *Router) Idx() *gin.Engine {
 		// authGroup.GET("/auto", p.ctl.Auth ...)
 	}
 
+	// 요청을 보낼 때, AccessToken을 확인하고 만료되었으면 발급해주는 미들웨어 필요
+	// RequestToken을 확인하고 기간이 얼마 남지 않았으면 갱신해주는 미들웨어 필요
 	// userGroup := r.Group("/user")
 	// {
 	// 	// 나의 정보 가져오기
