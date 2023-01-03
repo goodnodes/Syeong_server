@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"fmt"
+	// "fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/goodnodes/Syeong_server/model"
 	"github.com/goodnodes/Syeong_server/util"
@@ -17,6 +17,7 @@ func GetAuthController(um *model.UserModel) *AuthController {
 	return ac
 }
 
+// 로그인 메서드
 func (ac *AuthController) Login(c *gin.Context) {
 	var loginStruct model.LoginStruct
 	err := c.ShouldBindJSON(&loginStruct)
@@ -27,7 +28,7 @@ func (ac *AuthController) Login(c *gin.Context) {
 
 	// user Collection에서 id를 기반으로 user를 찾고, 그 Hpwd와 pwd를 해시한 값이 같은지 비교한다.
 	err = util.PwdCompare(loginStruct.Pwd, string(hashedPwd))
-
+	util.ErrorHandler(err)
 	// 같다면, RefreshToken과 AccessToken을 발급한다.
 	
 }
