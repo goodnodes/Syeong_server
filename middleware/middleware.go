@@ -4,7 +4,7 @@ import (
 	// "fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/goodnodes/Syeong_server/controller"
+	// "github.com/goodnodes/Syeong_server/controller"
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
@@ -36,6 +36,7 @@ func VerifyAccessToken() gin.HandlerFunc {
 			c.JSON(401, gin.H{
 				"msg" : "get Access Cookie failed",
 			})
+			c.Abort()
 			return
 		}
 		atValue := accessToken.Value
@@ -44,6 +45,7 @@ func VerifyAccessToken() gin.HandlerFunc {
 			c.JSON(401, gin.H{
 				"msg" : "accessToken is None",
 			})
+			c.Abort()
 			return
 		}
 
@@ -52,11 +54,19 @@ func VerifyAccessToken() gin.HandlerFunc {
 		_, err = jwt.ParseWithClaims(atValue, &claims, func(token *jwt.Token) (interface{}, error) {
 			return []byte("secret"), nil
 		})
-		// AccessToken이 검증불가한 경우 RefreshToken을 확인하여 재발급 절차를 거친다.
 		if err != nil {
-			var ac *controller.AuthController
-			ac.VerifyToken(c)
+			c.JSON(401, gin.H{
+				"msg" : "accessToken is None",
+			})
+			c.Abort()
 		}
+		// AccessToken이 검증불가한 경우 RefreshToken을 확인하여 재발급 절차를 거친다.
+		// if err != nil {
+		// 	var ac *controller.AuthController
+		// 	ac.VerifyToken(c)
+		// }
+
+		c.Set("userid", claims["userid"])
 		c.Next()
 	}
 }

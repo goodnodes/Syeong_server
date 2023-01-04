@@ -43,11 +43,12 @@ func (p *Router) Idx() *gin.Engine {
 		authGroup.GET("/auto", p.ctl.Auth.VerifyToken)
 	}
 
-	// 요청을 보낼 때, AccessToken을 확인하고 만료되었으면 발급해주는 미들웨어 필요 -> 아래 확인
-	// userGroup := r.Group("/user").Use(middleware.VerifyAccessToken())
+	// 작업 경로로 이동할 때는 미들웨어를 사용한다.
+	// 이 때 미들웨어에서는 Accesstoken을 확인 후 없으면 Abort 진행 -> 이에 따른 리다이렉팅을 프론트에서 진행해야함
+	userGroup := r.Group("/user").Use(middleware.VerifyAccessToken())
 	// {
 	// 	// 나의 정보 가져오기
-	// 	userGroup.GET("", p.ctl.User ...)
+		userGroup.GET("", p.ctl.User.UserTest)
 	// 	// 나의 수영장 추가
 	// 	userGroup.POST("/pool", p.ctl.User ...)
 	// 	// 나의 수영장 제거

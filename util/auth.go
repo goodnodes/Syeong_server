@@ -16,11 +16,13 @@ func HashPwd (pwd string) []byte {
 	return hashed
 }
 
+
 // pwd를 해싱한 값들을 비교하는 함수
 func PwdCompare (pwd, hash string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(pwd))
 	return err
 }
+
 
 // AccessToken을 발급하는 함수 -> 이 녀석은 RefreshToken이 정상적으로 존재할 때만 재발급한다.
 func GetAccessToken(userId string) string {
@@ -40,6 +42,7 @@ func GetAccessToken(userId string) string {
 
 	return signedToken
 }
+
 
 // RefreshToken을 발급하는 함수 -> 이 녀석은 id, pwd를 통해 유저가 DB에 있는 인원인 것을 확인했을 때 정상적으로 발급한다.
 func GetRefreshToken(userId string) string {
