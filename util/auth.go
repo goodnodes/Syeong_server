@@ -31,7 +31,8 @@ func GetAccessToken(userId string) string {
 	// 여기서 userId는 ObjectId일 예정이다.
 	claims["userid"] = userId
 	// 유효기간 하루
-	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	// claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	claims["exp"] = time.Now().Add(time.Second * 10).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString([]byte(secret))
 
@@ -47,7 +48,8 @@ func GetRefreshToken(userId string) string {
 	claims := jwt.MapClaims{}
 	claims["userid"] = userId
 	// 유효기간 한달
-	claims["exp"] = time.Now().Add(time.Hour * 24 * 30).Unix()
+	// claims["exp"] = time.Now().Add(time.Hour * 24 * 30).Unix()
+	claims["exp"] = time.Now().Add(time.Second * 30).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString([]byte(secret))
 
@@ -63,12 +65,12 @@ func VerifyRefreshToken(c *gin.Context) (string, error) {
 	refreshToken, err := c.Request.Cookie("refresh-token")
 	// 쿠키에서 토큰이 잘 가져와졌는지 확인
 	if err != nil {
-		return "", errors.New("get Cookie failed")
+		return "", errors.New("get Refresh Cookie failed")
 	}
 	rtValue := refreshToken.Value
 	// 토큰에 value가 잘 들어있는지 확인
 	if rtValue == "" {
-		return "", errors.New("token is None")
+		return "", errors.New("refreshToken is None")
 	}
 
 	// 토큰 파싱
@@ -82,39 +84,15 @@ func VerifyRefreshToken(c *gin.Context) (string, error) {
 	}
 
 	// 만약 RefreshToken의 유효기간이 일주일 이하로 남았다면 재발급
-	if claims["exp"].(int64) < time.Now().Add(time.Hour * 7).Unix() {
+	// if claims["exp"].(int64) < time.Now().Add(time.Hour * 7).Unix() {
+	// 	newRefreshToken := GetRefreshToken(claims["userid"].(string))
+	// 	c.SetCookie("refresh-token", newRefreshToken, 60*60*24*30, "/", "localhost:8080", false, true)
+	// }
+
+	if claims["exp"].(float64) < float64(time.Now().Add(time.Second * 10).Unix()) {
 		newRefreshToken := GetRefreshToken(claims["userid"].(string))
-		c.SetCookie("refresh-token", newRefreshToken, 60*60*24*60, "/", "localhost:8080", false, true)
+		c.SetCookie("refresh-token", newRefreshToken, 30, "/", "localhost:8080", false, true)
 	}
 
 	return claims["userid"].(string), nil
-}
-
-
-// AccessToken 검증 및 재발급 하는 함수
-func VerifyAccessToken(c *gin.Context, userId string) error {
-	
-	accessToken, err := c.Request.Cookie("access-token")
-	// 쿠키에서 토큰이 잘 가져와졌는지 확인
-	if err != nil {
-		return errors.New("get Cookie failed")
-	}
-	atValue := accessToken.Value
-	// 토큰에 value가 잘 들어있는지 확인
-	if atValue == "" {
-		return errors.New("token is None")
-	}
-
-	// 토큰 파싱
-	claims := jwt.MapClaims{}
-	_, err = jwt.ParseWithClaims(atValue, &claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte("secret"), nil
-	})
-	// AccessToken이 검증되지 않을 경우, 이미 RefreshToken이 확인되었기 때문에 재발급 진행
-	if err != nil {
-		newAccessToken := GetAccessToken(userId)
-		c.SetCookie("access-token", newAccessToken, 60*60*24, "/", "localhost:8080", false, true)
-	}
-
-	return nil
 }

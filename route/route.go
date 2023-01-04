@@ -22,7 +22,6 @@ func (p *Router) Idx() *gin.Engine {
 	// logger 미들웨어 추가 필요
 	// recovery 미들웨어 추가 필요
 	r.Use(middleware.CORS())
-	r.Use(middleware.VerifyToken())
 
 	// swagger route 추가 필요
 
@@ -41,12 +40,11 @@ func (p *Router) Idx() *gin.Engine {
 		// // 탈퇴
 		// authGroup.DELETE("", p.ctl.Auth ...)
 		// // 자동로그인
-		// authGroup.GET("/auto", p.ctl.Auth ...)
+		authGroup.GET("/auto", p.ctl.Auth.VerifyToken)
 	}
 
-	// 요청을 보낼 때, AccessToken을 확인하고 만료되었으면 발급해주는 미들웨어 필요
-	// RequestToken을 확인하고 기간이 얼마 남지 않았으면 갱신해주는 미들웨어 필요
-	// userGroup := r.Group("/user")
+	// 요청을 보낼 때, AccessToken을 확인하고 만료되었으면 발급해주는 미들웨어 필요 -> 아래 확인
+	// userGroup := r.Group("/user").Use(middleware.VerifyAccessToken())
 	// {
 	// 	// 나의 정보 가져오기
 	// 	userGroup.GET("", p.ctl.User ...)
