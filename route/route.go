@@ -22,23 +22,24 @@ func (p *Router) Idx() *gin.Engine {
 	// logger 미들웨어 추가 필요
 	// recovery 미들웨어 추가 필요
 	r.Use(middleware.CORS())
+	r.Use(middleware.VerifyToken())
 
 	// swagger route 추가 필요
 
 	authGroup := r.Group("/auth")
 	{
-		// 로그인
-		authGroup.POST("", p.ctl.Auth.Login)
-		// 로그아웃
-		// authGroup.GET("", p.ctl.Auth ...)
-		// // 탈퇴
-		// authGroup.DELETE("", p.ctl.Auth ...)
 		// // 번호인증 요청
 		// authGroup.GET("/:pnum", p.ctl.Auth ...)
 		// // 번호인증 확인
 		// authGroup.POST("/check", p.ctl.Auth ...)
 		// // 번호인증 후 회원가입
 		// authGroup.POST("/signup", p.ctl.Auth ...)
+		// 로그인
+		authGroup.POST("", p.ctl.Auth.Login)
+		// 로그아웃
+		// authGroup.GET("", p.ctl.Auth ...)
+		// // 탈퇴
+		// authGroup.DELETE("", p.ctl.Auth ...)
 		// // 자동로그인
 		// authGroup.GET("/auto", p.ctl.Auth ...)
 	}

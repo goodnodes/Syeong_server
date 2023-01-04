@@ -1,9 +1,13 @@
 package middleware
 
 import (
+	// "fmt"
+
 	"github.com/gin-gonic/gin"
+	// jwt "github.com/dgrijalva/jwt-go"
 )
 
+// CORS 설정 미들웨어
 func CORS() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
