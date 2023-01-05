@@ -45,7 +45,7 @@ func (ac *AuthController) Login(c *gin.Context) {
 
 // 자동 로그인에서 Access/Refresh token을 확인하는 메서드
 // Refresh토큰 유효기간이 얼마 안 남았을 시, Refresh토큰 만료시에 대한 로직
-func (ac *AuthController) VerifyToken(c *gin.Context){
+func (ac *AuthController) VerifyToken(c *gin.Context) {
 	// RefreshToken 검증작업
 	// 여기서 검증이 안되면 에러 반환, 검증 이후 남은 유효기간이 7일 이하면 새 토큰이 발급되어있음
 	userId, err := util.VerifyRefreshToken(c)
@@ -64,4 +64,8 @@ func (ac *AuthController) VerifyToken(c *gin.Context){
 	c.JSON(200, gin.H {
 		"msg" : "success",
 	})
+}
+
+func (ac *AuthController) SignUp(c *gin.Context) {
+
 }
