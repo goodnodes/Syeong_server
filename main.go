@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 	"net/http"
 	"github.com/goodnodes/Syeong_server/model"
@@ -11,7 +10,7 @@ import (
 )
 
 func main() {
-	// config 설정 추가 필요
+	// config 설정
 	config := config.GetConfig("config/config.toml")
 
 	port := config.Server.Port
@@ -21,7 +20,6 @@ func main() {
 	reviewModel := config.DB["reviews"]["model"]
 	poolModel := config.DB["pools"]["model"]
 
-	fmt.Println(config)
 	// logger 설정 추가 필요
 
 	// 원래는 환경변수를 config.toml 파일에서 받아와야 함

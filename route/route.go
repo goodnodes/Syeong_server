@@ -32,8 +32,8 @@ func (p *Router) Idx() *gin.Engine {
 		// 임시저장한 번호가 일치하면 이후 로직 가능, 다르면 임시저장 파일 삭제하고 abort
 		// 시간 단위로 문자를 보낼때의 시간도 같이 저장해놨다가 시간이 오바되면 거절하는 로직도 추가해야함
 		
-		// // 번호인증 요청
-		// authGroup.GET("/:pnum", p.ctl.Auth ...)
+		// 번호인증 요청
+		authGroup.GET("/request", p.ctl.Auth.RequestNumber)
 		// // 번호인증 확인
 		// authGroup.POST("/check", p.ctl.Auth ...)
 		// // 번호인증 후 회원가입

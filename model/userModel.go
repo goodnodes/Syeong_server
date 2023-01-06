@@ -1,11 +1,11 @@
 package model
 
 import (
-	// "fmt"
+	"fmt"
 	// "encoding/json"
 	"context"
 	
-	// "go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -22,9 +22,7 @@ type User struct {
 		Pnum string `bson:"pnum" json:"pnum"`
 		NickName string `bson:"nickname" json:"nickname"`
 		CreatedAt string `bson:"createdat" json:"createdat"`
-		RefreshToken string `bson:"refreshtoken" json:"refreshtoken"`
-		AccessToken string `bson:"accesstoken" json:"accesstoken"`
-	}
+	} `bson:"privateinfo" json:"privateinfo"`
 	MyPools []Pool `bson:"mypools" json:"mypools"`
 }
 
@@ -42,4 +40,21 @@ func GetUserModel(db, host, model string) (*UserModel, error) {
 	}
 
 	return um, nil
+}
+
+
+func (um *UserModel) FindUserByPnum(pNum string) bool {
+	filter := bson.D{{Key : "privateinfo", Value : bson.D{
+		{Key : "pnum", Value : pNum},
+	}}}
+	count, _ := um.UserCollection.CountDocuments(context.TODO(), filter)
+	fmt.Println(count)
+	// if err != nil {
+	// 	panic(err)
+	// } else 
+	if count > 0 {
+		return false
+	} else {
+		return true
+	}
 }

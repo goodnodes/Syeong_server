@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/goodnodes/Syeong_server/model"
 	"github.com/goodnodes/Syeong_server/util"
+	// "fmt"
 )
 
 type AuthController struct {
@@ -66,6 +67,24 @@ func (ac *AuthController) VerifyToken(c *gin.Context) {
 	})
 }
 
+
+func (ac *AuthController) RequestNumber(c *gin.Context) {
+	pnum := c.Query("pnum")
+	// 해당 번호로 가입한 사람이 있는지 확인
+	result := ac.UserModel.FindUserByPnum(pnum)
+	// 이미 존재한다면 abort
+	if !result {
+		c.JSON(401, gin.H{
+			"msg" : "already exist",
+		})
+		return
+	}
+
+
+}
+
+
+// 회원가입 함수 -> 번호 요청하고, 인증 한 후에 진입 가능
 func (ac *AuthController) SignUp(c *gin.Context) {
 
 }
