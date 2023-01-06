@@ -9,16 +9,17 @@ import (
 	"github.com/goodnodes/Syeong_server/config"
 )
 
+var cfg = config.GetConfig("config/config.toml")
+
 func main() {
 	// config 설정
-	config := config.GetConfig("config/config.toml")
 
-	port := config.Server.Port
-	host := config.Server.Host
-	dbName := config.Server.DBname
-	userModel := config.DB["users"]["model"]
-	reviewModel := config.DB["reviews"]["model"]
-	poolModel := config.DB["pools"]["model"]
+	port := cfg.Server.Port
+	host := cfg.Server.Host
+	dbName := cfg.Server.DBname
+	userModel := cfg.DB["users"]["model"]
+	reviewModel := cfg.DB["reviews"]["model"]
+	poolModel := cfg.DB["pools"]["model"]
 
 	// logger 설정 추가 필요
 
