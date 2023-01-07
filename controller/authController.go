@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"time"
 	"github.com/gin-gonic/gin"
 	"github.com/goodnodes/Syeong_server/model"
 	"github.com/goodnodes/Syeong_server/util"
@@ -68,6 +69,7 @@ func (ac *AuthController) VerifyToken(c *gin.Context) {
 }
 
 
+// 문자인증을 요구하는 메서드
 func (ac *AuthController) RequestNumber(c *gin.Context) {
 	pnum := c.Query("pnum")
 	// 해당 번호로 가입한 사람이 있는지 확인
@@ -80,6 +82,37 @@ func (ac *AuthController) RequestNumber(c *gin.Context) {
 		return
 	}
 
+	// 문자 전송하기
+	requestId := util.SendMsg(pnum)
+
+	c.JSON(200, gin.H{
+		// 메시지 requestId와 입력 시간을 Unix 초 형식으로 전송함
+		"requestId" : requestId,
+		"requestTime" : time.Now().Unix(),
+	})
+}
+
+
+// 문자를 검증하는 메서드
+func (ac *AuthController) CheckNumber(c *gin.Context) {
+	var check model.CheckSMSStruct
+	// now := time.Now().Unix()
+
+	err := c.ShouldBindJSON(&check)
+	if err != nil {
+		panic(err)
+	}
+
+	// 인증 시간이 5분을 초과한다면 abort
+	// if int(now) - check.RequestTime > 300 {
+	// 	c.JSON(400, gin.H{
+	// 		"msg" : "time over",
+	// 	})
+	// 	return
+	// }
+
+	// 문자 requestId를 가지고 문자 content를 확인하여 비교하는 작업
+	util.GetMsgId(check.RequestId)
 
 }
 

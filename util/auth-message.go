@@ -5,12 +5,15 @@ import (
 	"crypto/hmac"
 	"time"
 	"bytes"
+	"math/rand"
 	"io/ioutil"
 	"net/http"
 	"encoding/json"
 	"encoding/base64"
 	"strconv"
+	"fmt"
 	"github.com/goodnodes/Syeong_server/config"
+	"github.com/goodnodes/Syeong_server/model"
 )
 
 type SMS struct {
@@ -22,7 +25,7 @@ type SMS struct {
 	} `json:"messages"`
 }
 
-var cfg = config.GetConfig("../config/config.toml")
+var cfg = config.GetConfig("config/config.toml")
 var accessKey = cfg.SMS.Accesskey
 var privateKey = cfg.SMS.Privatekey
 var serviceId = cfg.SMS.Serviceid
@@ -48,14 +51,15 @@ func makeSignature(method, uri string) string {
 
 
 // 인증 메시지를 보내는 함수
-func SendMsg(pNum string) {
-
-	// Content에 랜덤한 숫자를 보내야 함.
+func SendMsg(pNum string) string {
+	// Content에 랜덤한 4자리 숫자를 보내야 함.
+	rand.Seed(time.Now().UnixNano())
+	random := rand.Intn(8999) + 1000
 
 	sms := SMS {
 		Type : "SMS",
 		From : "01064853201",
-		Content : "test Body",
+		Content : "셩 인증번호\n" + strconv.Itoa(random),
 		Messages : []struct {
 			To string `json:"to"`
 		} {
@@ -73,11 +77,74 @@ func SendMsg(pNum string) {
 		panic(err)
 	}
 
+	uri := "/sms/v2/services/" + serviceId + "/messages"
+	timestamp := strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10)
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	req.Header.Set("x-ncp-apigw-timestamp", timestamp)
+	req.Header.Set("x-ncp-iam-access-key", accessKey)
+	req.Header.Set("x-ncp-apigw-signature-v2", makeSignature("POST", uri))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	var respMap  map[string]interface{}
+
+	json.Unmarshal(respBody, &respMap)
+	
+	fmt.Println(respMap)
+	return  respMap["requestId"].(string)
+}
+
+
+// requestId로 messageId를 가져오는 함수
+func GetMsgId(requestId string) string {
+	req, err := http.NewRequest("GET", "https://sens.apigw.ntruss.com/sms/v2/services/" + serviceId + "/messages?requestId=" + requestId, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	uri := "/sms/v2/services/" + serviceId + "/messages?requestId=" + requestId
+	timestamp := strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10)
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	req.Header.Set("x-ncp-apigw-timestamp", timestamp)
+	req.Header.Set("x-ncp-iam-access-key", accessKey)
+	req.Header.Set("x-ncp-apigw-signature-v2", makeSignature("GET", uri))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	var messageData model.CheckSMSStatusStruct
+
+	err = json.Unmarshal(respBody, &messageData)
+	if err != nil {
+		panic(err)
+	}
+
+	// 메시지 id를 받아서 return해줌
+	return messageData.Messages[0].MessageId
 }
 
 
 // 이어져야 할 로직
-// 1. 메시지로 랜덤한 숫자를 보내고 body로 requestId와 현재 시간을 보낸다.
-// 2. 이어지는 확인 라우트에서는 body로 숫자와 requestId, 아까 보낸 시간을 받는다. 이 때 현재 시간이 아까 보낸 시간보다 5분 이상이면 abort
+// 1. 메시지로 랜덤한 숫자를 보내고 body로 requestId와 현재 시간을 보낸다. Do
+// 2. 이어지는 확인 라우트에서는 body로 숫자와 requestId, 아까 보낸 시간을 받는다. 이 때 현재 시간이 아까 보낸 시간보다 5분 이상이면 abort Do
 // 3. requestId를 가지고 네이버클라우드 메시지 현재 상태 확인 api에 보낸다. 그리고 그 결과값인 messageId로 다시 메시지 확인 api에 보낸다.
 // 4. 3번을 통해 받은 message body와 2번에서 받은 숫자가 같은지 확인한다. 다르다면 abort한다.

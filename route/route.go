@@ -35,7 +35,7 @@ func (p *Router) Idx() *gin.Engine {
 		// 번호인증 요청
 		authGroup.GET("/request", p.ctl.Auth.RequestNumber)
 		// // 번호인증 확인
-		// authGroup.POST("/check", p.ctl.Auth ...)
+		authGroup.POST("/check", p.ctl.Auth.CheckNumber)
 		// // 번호인증 후 회원가입
 		// authGroup.POST("/signup", p.ctl.Auth ...)
 		// 로그인
