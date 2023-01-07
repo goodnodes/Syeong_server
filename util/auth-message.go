@@ -143,9 +143,12 @@ func GetMsgId(requestId string) string {
 	// 그래서 messageData["messages"]의 value가 interface{}타입의 배열이라고 type assertion을 해 주었고
 	// 해당 요소의 0번째 요소는 다시 map[string]interface{} 타입이다. 이를 위해 다시 0번째 요소에 대한 type assertion을 해주었으며
 	// 그 map의 "messageId"라는 key의 value는 string 타입이기 때문에 다시 type assertion을 해주었다.
-	messageId := messageData["messages"].([]interface{})[0].(map[string]interface{})["messageId"].(string)
-
-	return messageId
+	if messageData["statusCode"] == "202" {
+		messageId := messageData["messages"].([]interface{})[0].(map[string]interface{})["messageId"].(string)
+		return messageId
+	} else {
+		panic(err)
+	}
 	// return messageData.Messages[0].MessageId
 }
 

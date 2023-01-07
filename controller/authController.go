@@ -5,7 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/goodnodes/Syeong_server/model"
 	"github.com/goodnodes/Syeong_server/util"
-	// "fmt"
+	"io"
+	"encoding/json"
+	"fmt"
 )
 
 type AuthController struct {
@@ -71,7 +73,13 @@ func (ac *AuthController) VerifyToken(c *gin.Context) {
 
 // 문자인증을 요구하는 메서드
 func (ac *AuthController) RequestNumber(c *gin.Context) {
-	pnum := c.Query("pnum")
+	var unMarshared map[string]string
+	body := c.Request.Body
+	data, _ := io.ReadAll(body)
+	json.Unmarshal(data, &unMarshared)
+
+	pnum := unMarshared["pnum"]
+	fmt.Println(pnum)
 	// 해당 번호로 가입한 사람이 있는지 확인
 	result := ac.UserModel.FindUserByPnum(pnum)
 	// 이미 존재한다면 abort
@@ -127,7 +135,7 @@ func (ac *AuthController) CheckNumber(c *gin.Context) {
 		})
 		return
 	} else {
-		c.JSON(400, gin.H{
+		c.JSON(401, gin.H{
 			"msg" : "unverified ",
 		})
 	}

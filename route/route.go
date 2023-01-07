@@ -33,11 +33,14 @@ func (p *Router) Idx() *gin.Engine {
 		// 시간 단위로 문자를 보낼때의 시간도 같이 저장해놨다가 시간이 오바되면 거절하는 로직도 추가해야함
 		
 		// 번호인증 요청 -> 여기를 통해 메시지를 요청하고
-		authGroup.GET("/request", p.ctl.Auth.RequestNumber)
+		authGroup.POST("/request", p.ctl.Auth.RequestNumber)
 		// 번호인증 확인 -> 여기를 통해 코드 입력값을 확인한다.
 		authGroup.POST("/check", p.ctl.Auth.CheckNumber)
-		// 회원가입 -> 앞의 두 단계를 정상진행하면, 아래로 가게 된다.
+		// 닉네임 중복검사 -> 여기를 통해 닉네임이 이미 존재하는지 확인해준다.
+		// authGroup.POST("/nickName", p.ctl.Auth ...)
+		// 회원가입 -> 앞의 세 단계를 정상진행하면, 아래로 가게 된다.
 		// authGroup.POST("/signup", p.ctl.Auth ...)
+
 		// 로그인
 		authGroup.POST("", p.ctl.Auth.Login)
 		// 로그아웃
