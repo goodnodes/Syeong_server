@@ -11,9 +11,8 @@ import (
 	"encoding/json"
 	"encoding/base64"
 	"strconv"
-	"fmt"
 	"github.com/goodnodes/Syeong_server/config"
-	"github.com/goodnodes/Syeong_server/model"
+	// "github.com/goodnodes/Syeong_server/model"
 )
 
 type SMS struct {
@@ -100,7 +99,6 @@ func SendMsg(pNum string) string {
 
 	json.Unmarshal(respBody, &respMap)
 	
-	fmt.Println(respMap)
 	return  respMap["requestId"].(string)
 }
 
@@ -131,7 +129,7 @@ func GetMsgId(requestId string) string {
 		panic(err)
 	}
 
-	var messageData model.CheckSMSStatusStruct
+	var messageData map[string]interface{}
 
 	err = json.Unmarshal(respBody, &messageData)
 	if err != nil {
@@ -139,12 +137,56 @@ func GetMsgId(requestId string) string {
 	}
 
 	// 메시지 id를 받아서 return해줌
-	return messageData.Messages[0].MessageId
+
+	// 코드 설명 ->  messageData라는 map에 대하여 key는 string, value는 interface{}이다.
+	// 이 때 value가 interface{}이기 때문에 다시 배열도 들어갈 수 있을 것이라 생각했다.
+	// 그래서 messageData["messages"]의 value가 interface{}타입의 배열이라고 type assertion을 해 주었고
+	// 해당 요소의 0번째 요소는 다시 map[string]interface{} 타입이다. 이를 위해 다시 0번째 요소에 대한 type assertion을 해주었으며
+	// 그 map의 "messageId"라는 key의 value는 string 타입이기 때문에 다시 type assertion을 해주었다.
+	messageId := messageData["messages"].([]interface{})[0].(map[string]interface{})["messageId"].(string)
+
+	return messageId
+	// return messageData.Messages[0].MessageId
+}
+
+
+// messageId로 message Content(내용)을 받아오는 함수
+func GetMsgContent(messageId string) string {
+	req, err := http.NewRequest("GET", "https://sens.apigw.ntruss.com/sms/v2/services/" + serviceId + "/messages/" + messageId, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	uri := "/sms/v2/services/" + serviceId + "/messages/" + messageId
+	timestamp := strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10)
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	req.Header.Set("x-ncp-apigw-timestamp", timestamp)
+	req.Header.Set("x-ncp-iam-access-key", accessKey)
+	req.Header.Set("x-ncp-apigw-signature-v2", makeSignature("GET", uri))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	var result map[string]interface{}
+
+	json.Unmarshal(respBody, &result)
+
+	body := result["messages"].([]interface{})[0].(map[string]interface{})["content"].(string)
+	return body
 }
 
 
 // 이어져야 할 로직
 // 1. 메시지로 랜덤한 숫자를 보내고 body로 requestId와 현재 시간을 보낸다. Do
 // 2. 이어지는 확인 라우트에서는 body로 숫자와 requestId, 아까 보낸 시간을 받는다. 이 때 현재 시간이 아까 보낸 시간보다 5분 이상이면 abort Do
-// 3. requestId를 가지고 네이버클라우드 메시지 현재 상태 확인 api에 보낸다. 그리고 그 결과값인 messageId로 다시 메시지 확인 api에 보낸다.
-// 4. 3번을 통해 받은 message body와 2번에서 받은 숫자가 같은지 확인한다. 다르다면 abort한다.
+// 3. requestId를 가지고 네이버클라우드 메시지 현재 상태 확인 api에 보낸다. 그리고 그 결과값인 messageId로 다시 메시지 확인 api에 보낸다. Do
+// 4. 3번을 통해 받은 message body와 2번에서 받은 숫자가 같은지 확인한다. 다르다면 abort한다. 

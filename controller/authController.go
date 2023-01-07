@@ -112,8 +112,25 @@ func (ac *AuthController) CheckNumber(c *gin.Context) {
 	// }
 
 	// 문자 requestId를 가지고 문자 content를 확인하여 비교하는 작업
-	util.GetMsgId(check.RequestId)
+	// 메시지 아이디를 먼저 가져온다.
+	messageId := util.GetMsgId(check.RequestId)
+	// 메시지 아이디를 사용하여 메시지 콘텐츠를 가져온다.
+	messageBody := util.GetMsgContent(messageId)
 
+	// 인증코드만 자른다.
+	code := messageBody[17:21]
+
+	// 인증코드 확인 작업
+	if check.Code == code {
+		c.JSON(200, gin.H{
+			"msg" : "verified",
+		})
+		return
+	} else {
+		c.JSON(400, gin.H{
+			"msg" : "unverified ",
+		})
+	}
 }
 
 
