@@ -145,5 +145,5 @@ func (ac *AuthController) CheckNumber(c *gin.Context) {
 // 회원가입 함수 -> 번호 요청하고, 인증 한 후에 진입 가능
 func (ac *AuthController) SignUp(c *gin.Context) {
 	// 먼저 비밀번호와 원하는 닉네임을 받는다.
-	
+	var user model.User
 }
