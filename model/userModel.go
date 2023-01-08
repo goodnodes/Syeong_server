@@ -22,8 +22,8 @@ type User struct {
 		Pnum string `bson:"pnum" json:"pnum"`
 		NickName string `bson:"nickname" json:"nickname"`
 		CreatedAt string `bson:"createdat" json:"createdat"`
-	} `bson:"privateinfo" json:"privateinfo"`
-	MyPools []Pool `bson:"mypools" json:"mypools"`
+	} `bson:"privateinfo" json:"privateinfo,omitempty"`
+	MyPools []Pool `bson:"mypools" json:"mypools,omitempty"`
 }
 
 func GetUserModel(db, host, model string) (*UserModel, error) {
