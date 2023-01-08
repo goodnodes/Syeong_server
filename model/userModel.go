@@ -21,7 +21,7 @@ type User struct {
 	PrivateInfo struct {
 		Pnum string `bson:"pnum" json:"pnum"`
 		NickName string `bson:"nickname" json:"nickname"`
-		CreatedAt string `bson:"createdat" json:"createdat"`
+		CreatedAt string `bson:"createdat" json:"createdat,omitempty"`
 	} `bson:"privateinfo" json:"privateinfo,omitempty"`
 	MyPools []Pool `bson:"mypools" json:"mypools,omitempty"`
 }
