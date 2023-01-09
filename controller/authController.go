@@ -161,4 +161,6 @@ func (ac *AuthController) SignUp(c *gin.Context) {
 		return
 	}
 
+	// 없다면 회원가입 진행
+	
 }
