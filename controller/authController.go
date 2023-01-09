@@ -146,4 +146,10 @@ func (ac *AuthController) CheckNumber(c *gin.Context) {
 func (ac *AuthController) SignUp(c *gin.Context) {
 	// 먼저 비밀번호와 원하는 닉네임을 받는다.
 	var user model.User
+	err := c.ShouldBindJSON(&user)
+	if err != nil {
+		panic(err)
+	}
+
+	
 }

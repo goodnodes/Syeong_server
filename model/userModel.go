@@ -22,7 +22,7 @@ type User struct {
 		Pnum string `bson:"pnum" json:"pnum"`
 		NickName string `bson:"nickname" json:"nickname"`
 		CreatedAt string `bson:"createdat" json:"createdat,omitempty"`
-	} `bson:"privateinfo" json:"privateinfo,omitempty"`
+	} `bson:"privateinfo" json:"privateinfo"`
 	MyPools []Pool `bson:"mypools" json:"mypools,omitempty"`
 }
 
