@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	// "encoding/json"
 	"context"
 	
@@ -43,15 +42,26 @@ func GetUserModel(db, host, model string) (*UserModel, error) {
 }
 
 
+// 핸드폰 번호 중복검사하는 메서드
 func (um *UserModel) FindUserByPnum(pNum string) bool {
 	filter := bson.D{{Key : "privateinfo", Value : bson.D{
 		{Key : "pnum", Value : pNum},
 	}}}
 	count, _ := um.UserCollection.CountDocuments(context.TODO(), filter)
-	fmt.Println(count)
-	// if err != nil {
-	// 	panic(err)
-	// } else 
+	if count > 0 {
+		return false
+	} else {
+		return true
+	}
+}
+
+
+// 닉네임 중복검사하는 메서드
+func (um *UserModel) FindUserByNickName(nickName string) bool {
+	filter := bson.D{{Key : "privateinfo", Value : bson.D{
+		{Key : "nickname", Value : nickName},
+	}}}
+	count, _ := um.UserCollection.CountDocuments(context.TODO(), filter)
 	if count > 0 {
 		return false
 	} else {
