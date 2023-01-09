@@ -151,5 +151,14 @@ func (ac *AuthController) SignUp(c *gin.Context) {
 		panic(err)
 	}
 
-	
+	// 다음은 원하는 닉네임이 이미 존재하는지 중복검사를 한다.
+	result := ac.UserModel.FindUserByNickName(user.PrivateInfo.NickName)
+	// 이미 있다면 에러 리턴
+	if !result {
+		c.JSON(401, gin.H{
+			"msg" : "already exist",
+		})
+		return
+	}
+
 }
