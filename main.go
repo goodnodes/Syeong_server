@@ -17,9 +17,9 @@ func main() {
 	port := cfg.Server.Port
 	host := cfg.Server.Host
 	dbName := cfg.Server.DBname
-	userModel := cfg.DB["users"]["model"]
-	reviewModel := cfg.DB["reviews"]["model"]
-	poolModel := cfg.DB["pools"]["model"]
+	userModel := cfg.DB["user"]["model"]
+	reviewModel := cfg.DB["review"]["model"]
+	poolModel := cfg.DB["pool"]["model"]
 
 	// logger 설정 추가 필요
 

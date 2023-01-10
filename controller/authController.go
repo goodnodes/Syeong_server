@@ -151,6 +151,7 @@ func (ac *AuthController) SignUp(c *gin.Context) {
 		panic(err)
 	}
 
+	fmt.Println(user)
 	// 다음은 원하는 닉네임이 이미 존재하는지 중복검사를 한다.
 	result := ac.UserModel.FindUserByNickName(user.PrivateInfo.NickName)
 	// 이미 있다면 에러 리턴
@@ -162,5 +163,27 @@ func (ac *AuthController) SignUp(c *gin.Context) {
 	}
 
 	// 없다면 회원가입 진행
-	
+	// 먼저 createdAt을 채워주자.
+	unixTime := time.Now().Unix()
+	t := time.Unix(unixTime, 0)
+	timeString := t.Format("2006-01-02 15:04:05")
+	user.PrivateInfo.CreatedAt = timeString
+
+	// 다음은 패스워드를 해시화해서 저장해주자
+	hashedPwd := util.HashPwd(user.PrivateInfo.Password)
+	user.PrivateInfo.Password = string(hashedPwd)
+
+	// DB에 유저 정보를 넣어주자
+	id, err := ac.UserModel.AddUserData(&user)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"err" : err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"id" : id,
+	})
+
 }

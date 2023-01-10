@@ -36,9 +36,8 @@ func (p *Router) Idx() *gin.Engine {
 		authGroup.POST("/request", p.ctl.Auth.RequestNumber)
 		// 번호인증 확인 -> 여기를 통해 코드 입력값을 확인한다.
 		authGroup.POST("/check", p.ctl.Auth.CheckNumber)
-		// 닉네임 중복검사 -> 여기를 통해 닉네임이 이미 존재하는지 확인해준다.
-		// 회원가입 -> 앞의 세 단계를 정상진행하면, 아래로 가게 된다.
-		// authGroup.POST("/signup", p.ctl.Auth ...)
+		// 회원가입 -> 앞의 두 단계를 정상진행하면, 아래로 가게 된다.
+		authGroup.POST("/signup", p.ctl.Auth.SignUp)
 
 		// 로그인
 		authGroup.POST("", p.ctl.Auth.Login)
