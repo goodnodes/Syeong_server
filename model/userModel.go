@@ -1,6 +1,7 @@
 package model
 
 import (
+	"github.com/goodnodes/Syeong_server/util"
 	// "encoding/json"
 	"context"
 	"fmt"
@@ -45,7 +46,7 @@ func GetUserModel(db, host, model string) (*UserModel, error) {
 
 
 // 핸드폰 번호 중복검사하는 메서드
-func (um *UserModel) FindUserByPnum(pNum string) bool {
+func (um *UserModel) CheckUserByPnum(pNum string) bool {
 	filter := bson.D{{Key : "privateinfo.pnum", Value : pNum}}
 	count, _ := um.UserCollection.CountDocuments(context.TODO(), filter)
 	fmt.Println(count)
@@ -58,7 +59,7 @@ func (um *UserModel) FindUserByPnum(pNum string) bool {
 
 
 // 닉네임 중복검사하는 메서드
-func (um *UserModel) FindUserByNickName(nickName string) bool {
+func (um *UserModel) CheckUserByNickName(nickName string) bool {
 
 	filter := bson.D{{Key : "privateinfo.nickname", Value : nickName}}
 	count, err := um.UserCollection.CountDocuments(context.TODO(), filter)
@@ -81,4 +82,19 @@ func (um *UserModel) AddUserData(user *User) (interface{}, error) {
 	}
 
 	return result.InsertedID, nil
+}
+
+
+
+// 핸드폰번호로 user를 찾는 메서드
+func (um *UserModel) FindUserByPnum(pNum string) *User {
+	var user User
+	filter := bson.D{{
+		Key : "privateinfo.pnum", Value : pNum,
+	}}
+
+	err := um.UserCollection.FindOne(context.TODO(), filter).Decode(&user)
+	util.ErrorHandler(err)
+
+	return &user
 }

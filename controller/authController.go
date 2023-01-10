@@ -26,17 +26,20 @@ func (ac *AuthController) Login(c *gin.Context) {
 	err := c.ShouldBindJSON(&loginStruct)
 	util.ErrorHandler(err)
 
-	// req로 받은 pwd를 해시해준다.
-	hashedPwd := util.HashPwd(loginStruct.Pwd)
-
 	// user Collection에서 id를 기반으로 user를 찾고, 그 Hpwd와 pwd를 해시한 값이 같은지 비교한다.
-	err = util.PwdCompare(loginStruct.Pwd, string(hashedPwd))
-	util.ErrorHandler(err)
+	user := ac.UserModel.FindUserByPnum(loginStruct.Pnum)
+
+	err = util.PwdCompare(user.PrivateInfo.Password, loginStruct.Pwd)
+	if err != nil {
+		c.JSON(401, gin.H{
+			"err" : "invalid",
+		})
+	}
 
 	// 같다면, RefreshToken과 AccessToken을 발급한다.
 	// 이 때 Token의 claims에 들어가는 id는 실제 id가 아닌 db ObjectId로 할 것이다.
-	accessToken := util.GetAccessToken(loginStruct.Pnum)
-	refreshToken := util.GetRefreshToken(loginStruct.Pnum)
+	accessToken := util.GetAccessToken(user.ID.Hex())
+	refreshToken := util.GetRefreshToken(user.ID.Hex())
 	// c.SetCookie("access-token", accessToken, 60*60*24, "/", "localhost", false, true)
 	c.SetCookie("access-token", accessToken, 10, "/", "localhost", false, true)
 	// 여기는 리프레시토큰을 넣어줘야지
@@ -81,7 +84,7 @@ func (ac *AuthController) RequestNumber(c *gin.Context) {
 	pnum := unMarshared["pnum"]
 	fmt.Println(pnum)
 	// 해당 번호로 가입한 사람이 있는지 확인
-	result := ac.UserModel.FindUserByPnum(pnum)
+	result := ac.UserModel.CheckUserByPnum(pnum)
 	// 이미 존재한다면 abort
 	if !result {
 		c.JSON(401, gin.H{
@@ -153,7 +156,7 @@ func (ac *AuthController) SignUp(c *gin.Context) {
 
 	fmt.Println(user)
 	// 다음은 원하는 닉네임이 이미 존재하는지 중복검사를 한다.
-	result := ac.UserModel.FindUserByNickName(user.PrivateInfo.NickName)
+	result := ac.UserModel.CheckUserByNickName(user.PrivateInfo.NickName)
 	// 이미 있다면 에러 리턴
 	if !result {
 		c.JSON(401, gin.H{

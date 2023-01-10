@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var secret = cfg.Token.Secret
 
 
 // pwd를 해싱하는 함수
@@ -21,7 +22,7 @@ func HashPwd (pwd string) []byte {
 
 
 // pwd를 해싱한 값들을 비교하는 함수
-func PwdCompare (pwd, hash string) error {
+func PwdCompare (hash, pwd string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(pwd))
 	return err
 }
@@ -30,11 +31,8 @@ func PwdCompare (pwd, hash string) error {
 
 // AccessToken을 발급하는 함수 -> 이 녀석은 RefreshToken이 정상적으로 존재할 때만 재발급한다.
 func GetAccessToken(userId string) string {
-	// 추후 config.toml 파일에서 환경변수 가져올 것
-	secret := "secret"
-
 	claims := jwt.MapClaims{}
-	// 여기서 userId는 ObjectId일 예정이다.
+	// claim의 "userid"에 user의 ObjectId를 넣어준다.
 	claims["userid"] = userId
 	// 유효기간 하루
 	// claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
@@ -51,9 +49,8 @@ func GetAccessToken(userId string) string {
 
 // RefreshToken을 발급하는 함수 -> 이 녀석은 id, pwd를 통해 유저가 DB에 있는 인원인 것을 확인했을 때 정상적으로 발급한다.
 func GetRefreshToken(userId string) string {
-	secret := "secret"
-
 	claims := jwt.MapClaims{}
+	// claim의 "userid"에 user의 ObjectId를 넣어준다.
 	claims["userid"] = userId
 	// 유효기간 한달
 	// claims["exp"] = time.Now().Add(time.Hour * 24 * 30).Unix()
@@ -85,7 +82,7 @@ func VerifyRefreshToken(c *gin.Context) (string, error) {
 	// 토큰 파싱
 	claims := jwt.MapClaims{}
 	_, err = jwt.ParseWithClaims(rtValue, &claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte("secret"), nil
+		return []byte(secret), nil
 	})
 	// RefreshToken이 검증이 되지 않을 경우에는, 다시 로그인이 필요함
 	if err != nil {

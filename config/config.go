@@ -12,6 +12,10 @@ type Config struct {
 		Serviceid string
 	}
 
+	Token struct {
+		Secret string
+	}
+
 	Server struct {
 		Mode string
 		Port string
