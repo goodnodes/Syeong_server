@@ -6,7 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 	// "github.com/goodnodes/Syeong_server/controller"
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/goodnodes/Syeong_server/config"
 )
+
+var cfg = config.GetConfig("config/config.toml")
+var secret = cfg.Token.Secret
 
 // CORS 설정 미들웨어
 func CORS() gin.HandlerFunc {
@@ -52,7 +56,7 @@ func VerifyAccessToken() gin.HandlerFunc {
 		// 토큰 파싱
 		claims := jwt.MapClaims{}
 		_, err = jwt.ParseWithClaims(atValue, &claims, func(token *jwt.Token) (interface{}, error) {
-			return []byte("secret"), nil
+			return []byte(secret), nil
 		})
 		if err != nil {
 			c.JSON(401, gin.H{

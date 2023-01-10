@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"errors"
 )
 
 type UserModel struct {
@@ -87,14 +88,18 @@ func (um *UserModel) AddUserData(user *User) (interface{}, error) {
 
 
 // 핸드폰번호로 user를 찾는 메서드
-func (um *UserModel) FindUserByPnum(pNum string) *User {
+func (um *UserModel) FindUserByPnum(pNum string) (*User, error) {
 	var user User
 	filter := bson.D{{
 		Key : "privateinfo.pnum", Value : pNum,
 	}}
 
 	err := um.UserCollection.FindOne(context.TODO(), filter).Decode(&user)
-	util.ErrorHandler(err)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, errors.New("no information")
+		}
+	}
 
-	return &user
+	return &user, nil
 }

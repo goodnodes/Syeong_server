@@ -28,12 +28,19 @@ func (ac *AuthController) Login(c *gin.Context) {
 
 	// user Collection에서 id를 기반으로 user를 찾고, 그 Hpwd와 pwd를 해시한 값이 같은지 비교한다.
 	user := ac.UserModel.FindUserByPnum(loginStruct.Pnum)
+	if err != nil {
+		c.JSON(401, gin.H{
+			"err" : err.Error(),
+		})
+		return
+	}
 
 	err = util.PwdCompare(user.PrivateInfo.Password, loginStruct.Pwd)
 	if err != nil {
 		c.JSON(401, gin.H{
 			"err" : "invalid",
 		})
+		return
 	}
 
 	// 같다면, RefreshToken과 AccessToken을 발급한다.
