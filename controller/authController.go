@@ -27,7 +27,7 @@ func (ac *AuthController) Login(c *gin.Context) {
 	util.ErrorHandler(err)
 
 	// user Collection에서 id를 기반으로 user를 찾고, 그 Hpwd와 pwd를 해시한 값이 같은지 비교한다.
-	user := ac.UserModel.FindUserByPnum(loginStruct.Pnum)
+	user, err := ac.UserModel.FindUserByPnum(loginStruct.Pnum)
 	if err != nil {
 		c.JSON(401, gin.H{
 			"err" : err.Error(),
@@ -114,7 +114,7 @@ func (ac *AuthController) RequestNumber(c *gin.Context) {
 // 문자를 검증하는 메서드
 func (ac *AuthController) CheckNumber(c *gin.Context) {
 	var check model.CheckSMSStruct
-	// now := time.Now().Unix()
+	now := time.Now().Unix()
 
 	err := c.ShouldBindJSON(&check)
 	if err != nil {
@@ -122,12 +122,12 @@ func (ac *AuthController) CheckNumber(c *gin.Context) {
 	}
 
 	// 인증 시간이 5분을 초과한다면 abort
-	// if int(now) - check.RequestTime > 300 {
-	// 	c.JSON(400, gin.H{
-	// 		"msg" : "time over",
-	// 	})
-	// 	return
-	// }
+	if int(now) - check.RequestTime > 300 {
+		c.JSON(400, gin.H{
+			"msg" : "time over",
+		})
+		return
+	}
 
 	// 문자 requestId를 가지고 문자 content를 확인하여 비교하는 작업
 	// 메시지 아이디를 먼저 가져온다.
@@ -140,8 +140,10 @@ func (ac *AuthController) CheckNumber(c *gin.Context) {
 
 	// 인증코드 확인 작업
 	if check.Code == code {
+		verifyCode := util.HashPwd(check.RequestId)
 		c.JSON(200, gin.H{
 			"msg" : "verified",
+			"verifycode" : string(verifyCode),
 		})
 		return
 	} else {
@@ -154,9 +156,14 @@ func (ac *AuthController) CheckNumber(c *gin.Context) {
 
 // 회원가입 함수 -> 번호 요청하고, 인증 한 후에 진입 가능
 func (ac *AuthController) SignUp(c *gin.Context) {
+	// verifyCode와 requestId를 가지고 해당 path에 요청할 수 있는지 확인한다.
+	verifyCode := c.Query("verifycode")
+	requestId := c.Query("requestid")
+	err := util.PwdCompare(verifyCode, requestId)
+	util.ErrorHandler(err)
 	// 먼저 비밀번호와 원하는 닉네임을 받는다.
 	var user model.User
-	err := c.ShouldBindJSON(&user)
+	err = c.ShouldBindJSON(&user)
 	if err != nil {
 		panic(err)
 	}

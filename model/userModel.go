@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/goodnodes/Syeong_server/util"
+	// "github.com/goodnodes/Syeong_server/util"
 	// "encoding/json"
 	"context"
 	"fmt"
