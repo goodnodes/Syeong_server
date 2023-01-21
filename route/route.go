@@ -44,7 +44,7 @@ func (p *Router) Idx() *gin.Engine {
 		// 로그아웃
 		authGroup.GET("", p.ctl.Auth.Logout)
 		// // 회원탈퇴
-		// authGroup.DELETE("", p.ctl.Auth ...)
+		authGroup.DELETE("", p.ctl.Auth.DeleteUser)
 		// // 자동로그인
 		authGroup.GET("/auto", p.ctl.Auth.VerifyToken)
 	}
