@@ -28,14 +28,24 @@ func (ac *AuthController) Login(c *gin.Context) {
 
 	// user Collection에서 id를 기반으로 user를 찾고, 그 Hpwd와 pwd를 해시한 값이 같은지 비교한다.
 	user, err := ac.UserModel.FindUserByPnum(loginStruct.Pnum)
+	// 존재하지 않는 아이디.
 	if err != nil {
 		c.JSON(401, gin.H{
-			"err" : err.Error(),
+			"msg" : err.Error(), // no information
+		})
+		return
+	}
+
+	// id는 존재하는데, 비밀번호를 전송하기 전
+	if loginStruct.Pwd == "" {
+		c.JSON(200, gin.H{
+			"msg" : "valid id",
 		})
 		return
 	}
 
 	err = util.PwdCompare(user.PrivateInfo.Password, loginStruct.Pwd)
+	// 비밀번호가 틀렸을 때
 	if err != nil {
 		c.JSON(401, gin.H{
 			"err" : "invalid",
@@ -148,7 +158,7 @@ func (ac *AuthController) CheckNumber(c *gin.Context) {
 		return
 	} else {
 		c.JSON(401, gin.H{
-			"msg" : "unverified ",
+			"msg" : "unverified",
 		})
 	}
 }
