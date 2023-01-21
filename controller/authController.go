@@ -217,3 +217,7 @@ func (ac *AuthController) SignUp(c *gin.Context) {
 
 // 로그아웃 함수 -> 프론트에 전송되었던 쿠키 정보를 삭제
 func (ac *AuthController) Logout(c *gin.Context) {}
+
+
+// 회원탈퇴 함수 -> 회원의 계정을 삭제하고, 연관된 모든 Data를 삭제
+func (ac *AuthController) DeleteUser(c *gin.Context) {}
