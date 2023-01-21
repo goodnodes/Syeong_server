@@ -42,7 +42,7 @@ func (p *Router) Idx() *gin.Engine {
 		// 로그인
 		authGroup.POST("", p.ctl.Auth.Login)
 		// 로그아웃
-		// authGroup.GET("", p.ctl.Auth ...)
+		authGroup.GET("", p.ctl.Auth.Logout)
 		// // 회원탈퇴
 		// authGroup.DELETE("", p.ctl.Auth ...)
 		// // 자동로그인
