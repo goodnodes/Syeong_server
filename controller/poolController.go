@@ -17,6 +17,10 @@ func GetPoolController(um *model.UserModel, rm *model.ReviewModel, pm *model.Poo
 	return pc
 }
 
-func (*PoolController) PoolTest(c *gin.Context) {
+func (pc *PoolController) PoolTest(c *gin.Context) {
 	c.IndentedJSON(200, gin.H{"msg" : "pool router"})
+}
+
+func (pc *PoolController) UpsertManyPool(c *gin.Context) {
+	
 }

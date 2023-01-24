@@ -18,17 +18,17 @@ type PoolModel struct {
 
 type Pool struct {
 	ID primitive.ObjectID `bson:"_id,omitempty"`
-	City string
-	Region string
-	Name string
-	Url string
-	Address string
-	Pnum string
-	ImgUrl string
-	LaneLength int
-	LaneNum int
-	CostInfoUrl string
-	FreeSwimInfoUrl string
+	City string `json:"city"`
+	Region string `json:"region"`
+	Name string `json:"name"`
+	Url string `json:"url"`
+	Address string `json:"address"`
+	Pnum string `json:"pnum"`
+	ImgUrl string `json:"imgurl"`
+	LaneLength int `json:"lanelength"`
+	LaneNum int `json:"lanenum"`
+	CostInfoUrl string `json:"costinfourl"`
+	FreeSwimInfoUrl string `json:"freeswiminfourl"`
 }
 
 func GetPoolModel(db, host, model string) (*PoolModel, error) {
@@ -44,4 +44,8 @@ func GetPoolModel(db, host, model string) (*PoolModel, error) {
 	}
 
 	return pm, nil
+}
+
+func (pm *PoolModel) UpsertManyPool() {
+
 }
