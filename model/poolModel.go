@@ -17,7 +17,7 @@ type PoolModel struct {
 }
 
 type Pool struct {
-	ID primitive.ObjectID `bson:"_id,omitempty"`
+	ID primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
 	City string `json:"city"`
 	Region string `json:"region"`
 	Name string `json:"name"`
@@ -25,6 +25,7 @@ type Pool struct {
 	Address string `json:"address"`
 	Pnum string `json:"pnum"`
 	ImgUrl string `json:"imgurl"`
+	OutsideImgUrl string `json:"outsideimgurl"`
 	LaneLength int `json:"lanelength"`
 	LaneNum int `json:"lanenum"`
 	CostInfoUrl string `json:"costinfourl"`

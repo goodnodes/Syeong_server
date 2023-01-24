@@ -1,6 +1,9 @@
 package controller
 
 import (
+	"fmt"
+
+	"github.com/goodnodes/Syeong_server/util"
 	"github.com/gin-gonic/gin"
 	"github.com/goodnodes/Syeong_server/model"
 )
@@ -22,5 +25,13 @@ func (pc *PoolController) PoolTest(c *gin.Context) {
 }
 
 func (pc *PoolController) UpsertManyPool(c *gin.Context) {
-	
+	var pools [] model.Pool
+	err := c.ShouldBindJSON(&pools)
+	util.ErrorHandler(err)
+
+	for _, value := range pools {
+		fmt.Println(value)
+	}
+
+	fmt.Println(len(pools))
 }
