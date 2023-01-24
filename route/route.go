@@ -79,5 +79,7 @@ func (p *Router) Idx() *gin.Engine {
 	// 	reviewGroup.DELETE("/:reviewid", p.ctl.Review ...)
 	// }
 
+	// admin 그룹을 추가하여 pool 정보 업데이트 등을 다루는 메서드를 만들어야함
+
 	return r
 }
