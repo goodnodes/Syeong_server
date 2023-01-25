@@ -149,3 +149,24 @@ func (um *UserModel) GetMyInfo(userId primitive.ObjectID) *User {
 
 	return user
 }
+
+
+// 나의 목표를 수정하는 메서드
+func (um *UserModel) EditMyGoal(goal string, userId primitive.ObjectID) error {
+	filter := bson.D{{
+		Key : "_id", Value : userId,
+	}}
+	update := bson.D{{
+		Key : "$set", Value : bson.D{{
+			Key : "privateinfo.goal", Value : goal,
+		}},
+	}}
+
+	_, err := um.UserCollection.UpdateOne(context.TODO(), filter, update)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

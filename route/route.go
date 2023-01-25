@@ -55,6 +55,8 @@ func (p *Router) Idx() *gin.Engine {
 	{
 		// 나의 정보 가져오기
 		userGroup.GET("", p.ctl.User.GetMyInfo)
+		// 나의 목표 추가하기
+		userGroup.POST("", p.ctl.User.EditMyGoal)
 		// 나의 수영장 추가
 		userGroup.GET("/pool", p.ctl.User.AddMyPool)
 		// 나의 수영장 제거
