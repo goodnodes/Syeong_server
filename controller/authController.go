@@ -217,7 +217,12 @@ func (ac *AuthController) SignUp(c *gin.Context) {
 
 // 로그아웃 함수 -> 프론트에 전송되었던 쿠키 정보를 삭제
 func (ac *AuthController) Logout(c *gin.Context) {
+	c.SetCookie("access-token", "", -1, "/", "localhost", false, true)
+	c.SetCookie("refresh-token", "", -1, "/", "localhost", false, true)
 
+	c.JSON(200, gin.H{
+		"msg" : "logout success",
+	})
 }
 
 
