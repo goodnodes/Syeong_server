@@ -65,3 +65,18 @@ func (pm *PoolModel) ReplacePool(pool *Pool) error {
 	}
 	return nil
 }
+
+func(pm *PoolModel) GetAllPool() ([]Pool, error) {
+	filter := bson.D{{}}
+	cursor, err := pm.PoolCollection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+
+	var pools []Pool
+	if err = cursor.All(context.TODO(), &pools); err != nil {
+		return nil, err
+	}
+
+	return pools, nil
+}

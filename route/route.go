@@ -61,13 +61,13 @@ func (p *Router) Idx() *gin.Engine {
 	// 	userGroup.PATCH("/pool", p.ctl.User ...)
 	// }
 
-	// poolGroup := r.Group("/pool")
-	// {
+	poolGroup := r.Group("/pool")
+	{
 	// 	// 전체 수영장 정보 가져오기
-	// 	poolGroup.GET("", p.ctl.Pool ...)
+		poolGroup.GET("", p.ctl.Pool.GetAll)
 	// 	// 수영장별 리뷰 가져오기
 	// 	poolGroup.GET("/:poolid", p.ctl.Pool ...)
-	// }
+	}
 
 	// reviewGroup := r.Group("/review")
 	// {

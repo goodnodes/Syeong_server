@@ -61,3 +61,18 @@ func (pc *PoolController) ReplacePool(c *gin.Context) {
 		"msg" : "Replace success",
 	})
 }
+
+
+func (pc *PoolController) GetAll(c *gin.Context) {
+	pools, err := pc.PoolModel.GetAllPool()
+	if err != nil {
+		c.JSON(400, gin.H{
+			"err" : err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H {
+		"pools" : pools,
+	})
+}
