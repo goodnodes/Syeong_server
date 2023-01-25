@@ -26,7 +26,7 @@ type User struct {
 		CreatedAt string `bson:"createdat" json:"createdat,omitempty"`
 		Goal string `bson:"goal" json:"goal,omitempty"`
 	} `bson:"privateinfo" json:"privateinfo"`
-	MyPools []Pool `bson:"mypools" json:"mypools,omitempty"`
+	MyPools []primitive.ObjectID `bson:"mypools" json:"mypools,omitempty"`
 }
 
 func GetUserModel(db, host, model string) (*UserModel, error) {
@@ -102,4 +102,21 @@ func (um *UserModel) FindUserByPnum(pNum string) (*User, error) {
 	}
 
 	return &user, nil
+}
+
+
+
+// 나의 수영장 추가하는 메서드
+func (um *UserModel) AddMyPool(userId, poolId primitive.ObjectID) error {
+	filter := bson.D{{Key : "_id", Value : userId}}
+	update := bson.D{{Key : "$push", Value : bson.D{{
+		Key : "mypools", Value : poolId,
+	}}}}
+	_, err := um.UserCollection.UpdateOne(context.TODO(), filter, update)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

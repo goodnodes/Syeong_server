@@ -48,6 +48,9 @@ func GetPoolModel(db, host, model string) (*PoolModel, error) {
 	return pm, nil
 }
 
+
+
+// admin -> 수영장 정보 여러개 입력하는 메서드
 func (pm *PoolModel) InsertManyPool(pools []interface{}) error {
 	_, err := pm.PoolCollection.InsertMany(context.TODO(), pools)
 	
@@ -57,6 +60,9 @@ func (pm *PoolModel) InsertManyPool(pools []interface{}) error {
 	return nil
 }
 
+
+
+// admin -> 수영장 정보 대체하는 메서드
 func (pm *PoolModel) ReplacePool(pool *Pool) error {
 	filter := bson.D{{Key : "name", Value : pool.Name}}
 	_, err := pm.PoolCollection.ReplaceOne(context.TODO(), filter, pool)

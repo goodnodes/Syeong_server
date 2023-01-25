@@ -1,7 +1,8 @@
 package controller
 
 import (
-	"fmt"
+	"github.com/goodnodes/Syeong_server/util"
+	// "fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/goodnodes/Syeong_server/model"
 )
@@ -18,7 +19,14 @@ func GetUserController(um *model.UserModel, rm *model.ReviewModel, pm *model.Poo
 	return uc
 }
 
-func (*UserController) UserTest(c *gin.Context) {
-	fmt.Println(c.MustGet("userid"))
-	c.IndentedJSON(200, gin.H{"msg" : "user router"})
+
+// 나의 수영장 추가하는 메서드
+func(uc *UserController) AddMyPool(c *gin.Context) {
+	userIdString := c.MustGet("userid")
+	poolIdString := c.Query("id")
+
+	userId := util.StringToObjectId(userIdString.(string))
+	poolId := util.StringToObjectId(poolIdString)
+
+	uc.UserModel.AddMyPool(userId, poolId)
 }

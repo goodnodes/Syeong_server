@@ -35,8 +35,8 @@ func GetAccessToken(userId string) string {
 	// claim의 "userid"에 user의 ObjectId를 넣어준다.
 	claims["userid"] = userId
 	// 유효기간 하루
-	// claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
-	claims["exp"] = time.Now().Add(time.Second * 10).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	// claims["exp"] = time.Now().Add(time.Second * 10).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString([]byte(secret))
 
@@ -53,8 +53,8 @@ func GetRefreshToken(userId string) string {
 	// claim의 "userid"에 user의 ObjectId를 넣어준다.
 	claims["userid"] = userId
 	// 유효기간 한달
-	// claims["exp"] = time.Now().Add(time.Hour * 24 * 30).Unix()
-	claims["exp"] = time.Now().Add(time.Second * 30).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * 24 * 30).Unix()
+	// claims["exp"] = time.Now().Add(time.Second * 30).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString([]byte(secret))
 
@@ -90,15 +90,15 @@ func VerifyRefreshToken(c *gin.Context) (string, error) {
 	}
 
 	// 만약 RefreshToken의 유효기간이 일주일 이하로 남았다면 재발급
-	// if claims["exp"].(int64) < time.Now().Add(time.Hour * 7).Unix() {
-	// 	newRefreshToken := GetRefreshToken(claims["userid"].(string))
-	// 	c.SetCookie("refresh-token", newRefreshToken, 60*60*24*30, "/", "localhost:8080", false, true)
-	// }
-
-	if claims["exp"].(float64) < float64(time.Now().Add(time.Second * 10).Unix()) {
+	if claims["exp"].(float64) < float64(time.Now().Add(time.Hour * 24 * 7).Unix()) {
 		newRefreshToken := GetRefreshToken(claims["userid"].(string))
-		c.SetCookie("refresh-token", newRefreshToken, 30, "/", "localhost:8080", false, true)
+		c.SetCookie("refresh-token", newRefreshToken, 60*60*24*30, "/", "localhost:8080", false, true)
 	}
+
+	// if claims["exp"].(float64) < float64(time.Now().Add(time.Second * 10).Unix()) {
+	// 	newRefreshToken := GetRefreshToken(claims["userid"].(string))
+	// 	c.SetCookie("refresh-token", newRefreshToken, 30, "/", "localhost:8080", false, true)
+	// }
 
 	return claims["userid"].(string), nil
 }

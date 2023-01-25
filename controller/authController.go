@@ -57,11 +57,11 @@ func (ac *AuthController) Login(c *gin.Context) {
 	// 이 때 Token의 claims에 들어가는 id는 실제 id가 아닌 db ObjectId로 할 것이다.
 	accessToken := util.GetAccessToken(user.ID.Hex())
 	refreshToken := util.GetRefreshToken(user.ID.Hex())
-	// c.SetCookie("access-token", accessToken, 60*60*24, "/", "localhost", false, true)
-	c.SetCookie("access-token", accessToken, 10, "/", "localhost", false, true)
+	c.SetCookie("access-token", accessToken, 60*60*24, "/", "localhost", false, true)
+	// c.SetCookie("access-token", accessToken, 10, "/", "localhost", false, true)
 	// 여기는 리프레시토큰을 넣어줘야지
-	// c.SetCookie("refresh-token", refreshToken, 60*60*24*30, "/", "localhost", false, true)
-	c.SetCookie("refresh-token", refreshToken, 30, "/", "localhost", false, true)
+	c.SetCookie("refresh-token", refreshToken, 60*60*24*30, "/", "localhost", false, true)
+	// c.SetCookie("refresh-token", refreshToken, 30, "/", "localhost", false, true)
 	c.JSON(200, gin.H{"msg" : "good"})
 }
 
@@ -82,8 +82,8 @@ func (ac *AuthController) VerifyToken(c *gin.Context) {
 
 	// 위에서 이미 refreshToken이 검증되었기 때문에, AccessToken을 발급해준다.
 	newAccessToken := util.GetAccessToken(userId)
-	// c.SetCookie("access-token", newAccessToken, 60*60*24, "/", "localhost", false, true)
-	c.SetCookie("access-token", newAccessToken, 10, "/", "localhost", false, true)
+	c.SetCookie("access-token", newAccessToken, 60*60*24, "/", "localhost", false, true)
+	// c.SetCookie("access-token", newAccessToken, 10, "/", "localhost", false, true)
 
 	c.JSON(200, gin.H {
 		"msg" : "success",

@@ -52,14 +52,14 @@ func (p *Router) Idx() *gin.Engine {
 	// 작업 경로로 이동할 때는 미들웨어를 사용한다.
 	// 이 때 미들웨어에서는 Accesstoken을 확인 후 없으면 Abort 진행 -> 이에 따른 리다이렉팅을 프론트에서 진행해야함
 	userGroup := r.Group("/user").Use(middleware.VerifyAccessToken())
-	// {
-	// 	// 나의 정보 가져오기
+	{
+		// 나의 정보 가져오기
 		userGroup.GET("", p.ctl.User.UserTest)
-	// 	// 나의 수영장 추가
-	// 	userGroup.POST("/pool", p.ctl.User ...)
-	// 	// 나의 수영장 제거
-	// 	userGroup.PATCH("/pool", p.ctl.User ...)
-	// }
+		// 나의 수영장 추가
+		userGroup.GET("/pool", p.ctl.User.AddMyPool)
+		// 나의 수영장 제거
+		// userGroup.PATCH("/pool", p.ctl.User ...)
+	}
 
 	poolGroup := r.Group("/pool")
 	{
