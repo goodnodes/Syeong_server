@@ -120,3 +120,19 @@ func (um *UserModel) AddMyPool(userId, poolId primitive.ObjectID) error {
 
 	return nil
 }
+
+
+// 나의 수영장 제거하는 메서드
+func (um *UserModel) DeleteMyPool(userId, poolId primitive.ObjectID) error {
+	filter := bson.D{{Key : "_id", Value : userId}}
+	update := bson.D{{Key : "$pull", Value : bson.D{{
+		Key : "mypools", Value : poolId,
+	}}}}
+	_, err := um.UserCollection.UpdateOne(context.TODO(), filter, update)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

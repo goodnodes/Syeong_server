@@ -58,10 +58,10 @@ func (p *Router) Idx() *gin.Engine {
 		// 나의 수영장 추가
 		userGroup.GET("/pool", p.ctl.User.AddMyPool)
 		// 나의 수영장 제거
-		// userGroup.PATCH("/pool", p.ctl.User ...)
+		userGroup.DELETE("/pool", p.ctl.User.DeleteMyPool)
 	}
 
-	poolGroup := r.Group("/pool")
+	poolGroup := r.Group("/pool").Use(middleware.VerifyAccessToken())
 	{
 	// 	// 전체 수영장 정보 가져오기
 		poolGroup.GET("", p.ctl.Pool.GetAll)
