@@ -63,3 +63,17 @@ func(uc *UserController) DeleteMyPool(c *gin.Context) {
 		"msg" : "success",
 	})
 }
+
+func(uc *UserController) GetMyInfo(c *gin.Context) {
+	userIdString := c.MustGet("userid")
+
+	userId := util.StringToObjectId(userIdString.(string))
+
+	result := uc.UserModel.GetMyInfo(userId)
+
+	result.PrivateInfo.Password = ""
+
+	c.JSON(200, gin.H{
+		"result" : result,
+	})
+}

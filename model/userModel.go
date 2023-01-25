@@ -136,3 +136,16 @@ func (um *UserModel) DeleteMyPool(userId, poolId primitive.ObjectID) error {
 
 	return nil
 }
+
+
+
+// 나의 정보 가져오는 메서드
+func (um *UserModel) GetMyInfo(userId primitive.ObjectID) *User {
+	user := &User{}
+	filter := bson.D{{
+		Key : "_id", Value : userId,
+	}}
+	um.UserCollection.FindOne(context.TODO(), filter).Decode(user)
+
+	return user
+}
