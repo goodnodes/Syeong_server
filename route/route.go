@@ -82,7 +82,10 @@ func (p *Router) Idx() *gin.Engine {
 	// admin 그룹을 추가하여 pool 정보 업데이트 등을 다루는 메서드를 만들어야함
 	adminGroup := r.Group("/admin")
 	{
-		adminGroup.POST("", p.ctl.Pool.UpsertManyPool)
+		// 수영장 정보 여러개 집어넣기
+		adminGroup.POST("", p.ctl.Pool.InsertManyPool)
+		// 수영장 정보 업데이트하기
+		adminGroup.PATCH("", p.ctl.Pool.ReplacePool)
 	}
 
 	return r

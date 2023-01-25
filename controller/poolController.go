@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"fmt"
+	// "fmt"
 
 	"github.com/goodnodes/Syeong_server/util"
 	"github.com/gin-gonic/gin"
@@ -24,14 +24,40 @@ func (pc *PoolController) PoolTest(c *gin.Context) {
 	c.IndentedJSON(200, gin.H{"msg" : "pool router"})
 }
 
-func (pc *PoolController) UpsertManyPool(c *gin.Context) {
-	var pools [] model.Pool
+func (pc *PoolController) InsertManyPool(c *gin.Context) {
+	var pools []interface{}
 	err := c.ShouldBindJSON(&pools)
 	util.ErrorHandler(err)
 
-	for _, value := range pools {
-		fmt.Println(value)
+	err = pc.PoolModel.InsertManyPool(pools)
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"err" : err.Error(),
+		})
+		return
 	}
 
-	fmt.Println(len(pools))
+	c.JSON(200, gin.H{
+		"msg" : "Insert success",
+	})
+}
+
+func (pc *PoolController) ReplacePool(c *gin.Context) {
+	pool := &model.Pool{}
+	err := c.ShouldBindJSON(pool)
+	util.ErrorHandler(err)
+
+	err = pc.PoolModel.ReplacePool(pool)
+	
+	if err != nil {
+		c.JSON(400, gin.H{
+			"err" : err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"msg" : "Replace success",
+	})
 }
