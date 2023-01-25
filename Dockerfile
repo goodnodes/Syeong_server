@@ -1,5 +1,7 @@
 FROM mongo:latest
 
+VOLUME [ "/docker/mongo/data/db" ]
+
 WORKDIR /data/db
 
 # 이미지 생성

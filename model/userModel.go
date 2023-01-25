@@ -170,3 +170,24 @@ func (um *UserModel) EditMyGoal(goal string, userId primitive.ObjectID) error {
 
 	return nil
 }
+
+
+// 닉네임을 변경하는 메서드
+func (um *UserModel) EditMyNickName(userId primitive.ObjectID, nickName string) error {
+	filter := bson.D{{
+		Key : "_id", Value : userId,
+	}}
+	update := bson.D{{
+		Key : "$set", Value : bson.D{{
+			Key : "privateinfo.nickname", Value : nickName,
+		}},
+	}}
+
+	_, err := um.UserCollection.UpdateOne(context.TODO(), filter, update)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

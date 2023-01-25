@@ -85,8 +85,8 @@ func(uc *UserController) GetMyInfo(c *gin.Context) {
 }
 
 
-// 나의 목표를 추가하는 메서드
-func(uc *UserController) EditMyGoal(c *gin.Context) {
+// 나의 목표, 닉네임을 변경하는 메서드
+func(uc *UserController) EditMyInfo(c *gin.Context) {
 	userIdString := c.MustGet("userid")
 	userId := util.StringToObjectId(userIdString.(string))
 
@@ -97,10 +97,46 @@ func(uc *UserController) EditMyGoal(c *gin.Context) {
 	util.ErrorHandler(err)
 
 	json.Unmarshal(data, &dataMap)
+	legacyNickname := dataMap["legacy"].(string)
+	newNickName := dataMap["new"].(string)
 	goal := dataMap["goal"].(string)
 
-	err = uc.UserModel.EditMyGoal(goal, userId)
+	// 이전 닉넴과 현재 닉넴이 같을땐 바로 goal만 업데이트함
+	if legacyNickname == newNickName {
+		err = uc.UserModel.EditMyGoal(goal, userId)
 
+		if err != nil {
+			c.JSON(400, gin.H{
+				"err" : err.Error(),
+			})
+			return
+		}
+
+		c.JSON(200, gin.H{
+			"msg" : "success",
+		})
+		return
+	}
+
+	// 다를 땐 닉네임 비교 후 goal을 업데이트함
+	result := uc.UserModel.CheckUserByNickName(newNickName)
+	if !result { // 닉네임이 이미 존재하는 경우
+		c.JSON(400, gin.H{
+			"msg" : "already exist",
+		})
+		return
+	}
+
+	// 닉네임이 존재하지 않는 경우
+	// 닉네임 변경하고 goal도 변경해줌
+	err = uc.UserModel.EditMyNickName(userId, newNickName)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"err" : err.Error(),
+		})
+		return
+	}
+	err = uc.UserModel.EditMyGoal(goal, userId)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
