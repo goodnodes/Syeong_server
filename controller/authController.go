@@ -172,8 +172,8 @@ func (ac *AuthController) SignUp(c *gin.Context) {
 	err := util.PwdCompare(verifyCode, requestId)
 	util.ErrorHandler(err)
 	// 먼저 비밀번호와 원하는 닉네임을 받는다.
-	var user model.User
-	err = c.ShouldBindJSON(&user)
+	user := &model.User{}
+	err = c.ShouldBindJSON(user)
 	if err != nil {
 		panic(err)
 	}
@@ -201,7 +201,7 @@ func (ac *AuthController) SignUp(c *gin.Context) {
 	user.PrivateInfo.Password = string(hashedPwd)
 
 	// DB에 유저 정보를 넣어주자
-	id, err := ac.UserModel.AddUserData(&user)
+	id, err := ac.UserModel.AddUserData(user)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"err" : err.Error(),

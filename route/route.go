@@ -54,7 +54,7 @@ func (p *Router) Idx() *gin.Engine {
 	userGroup := r.Group("/user").Use(middleware.VerifyAccessToken())
 	{
 		// 나의 정보 가져오기
-		userGroup.GET("", p.ctl.User.UserTest)
+		// userGroup.GET("", p.ctl.User.UserTest)
 		// 나의 수영장 추가
 		userGroup.GET("/pool", p.ctl.User.AddMyPool)
 		// 나의 수영장 제거

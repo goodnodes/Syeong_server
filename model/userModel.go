@@ -26,7 +26,7 @@ type User struct {
 		CreatedAt string `bson:"createdat" json:"createdat,omitempty"`
 		Goal string `bson:"goal" json:"goal,omitempty"`
 	} `bson:"privateinfo" json:"privateinfo"`
-	MyPools []primitive.ObjectID `bson:"mypools" json:"mypools,omitempty"`
+	MyPools []primitive.ObjectID `bson:"mypools,omitempty" json:"mypools,omitempty"`
 }
 
 func GetUserModel(db, host, model string) (*UserModel, error) {
