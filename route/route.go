@@ -43,9 +43,7 @@ func (p *Router) Idx() *gin.Engine {
 		authGroup.POST("", p.ctl.Auth.Login)
 		// 로그아웃
 		authGroup.GET("", p.ctl.Auth.Logout)
-		// // 회원탈퇴
-		authGroup.DELETE("", p.ctl.Auth.DeleteUser)
-		// // 자동로그인
+		// 자동로그인
 		authGroup.GET("/auto", p.ctl.Auth.VerifyToken)
 	}
 
@@ -61,6 +59,8 @@ func (p *Router) Idx() *gin.Engine {
 		userGroup.GET("/pool", p.ctl.User.AddMyPool)
 		// 나의 수영장 제거
 		userGroup.DELETE("/pool", p.ctl.User.DeleteMyPool)
+		// 회원탈퇴 -> 회원 탈퇴 이후 바로 로그아웃 요청할 것
+		userGroup.DELETE("", p.ctl.Auth.DeleteUser)
 	}
 
 	poolGroup := r.Group("/pool").Use(middleware.VerifyAccessToken())

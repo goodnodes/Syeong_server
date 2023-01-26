@@ -226,7 +226,23 @@ func (ac *AuthController) Logout(c *gin.Context) {
 }
 
 
+
 // 회원탈퇴 함수 -> 회원의 계정을 삭제하고, 연관된 모든 Data를 삭제
+// 현재는 리뷰 등 다른 데이터와 연관된 것이 없기 때문에 user만 삭제하면 됨
 func (ac *AuthController) DeleteUser(c *gin.Context) {
-	
+	userIdString := c.MustGet("userid")
+	userId := util.StringToObjectId(userIdString.(string))
+
+	err := ac.UserModel.DeleteMyAccount(userId)
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"err" : err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"msg" : "success",
+	})
 }

@@ -191,3 +191,18 @@ func (um *UserModel) EditMyNickName(userId primitive.ObjectID, nickName string) 
 
 	return nil
 }
+
+
+// 회원정보를 삭제하는 메서드
+func (um *UserModel) DeleteMyAccount(userId primitive.ObjectID) error {
+	filter := bson.D{{
+		Key : "_id", Value : userId,
+	}}
+	_, err := um.UserCollection.DeleteOne(context.TODO(), filter)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
