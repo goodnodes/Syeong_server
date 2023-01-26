@@ -8,6 +8,7 @@ import (
 	"io"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 )
 
 type AuthController struct {
@@ -98,18 +99,28 @@ func (ac *AuthController) RequestNumber(c *gin.Context) {
 	data, _ := io.ReadAll(body)
 	json.Unmarshal(data, &unMarshared)
 
+	purpose := c.Query("purpose")
+
 	pnum := unMarshared["pnum"]
 	fmt.Println(pnum)
 	// 해당 번호로 가입한 사람이 있는지 확인
 	result := ac.UserModel.CheckUserByPnum(pnum)
-	// 이미 존재한다면 abort
-	if !result {
-		c.JSON(401, gin.H{
-			"msg" : "already exist",
-		})
-		return
+	// 회원가입일 경우, 이미 존재한다면 abort
+	if purpose == "signup" {
+		if !result {
+			c.JSON(401, gin.H{
+				"msg" : "already exist",
+			})
+			return
+		}
+	} else if purpose == "password" {
+		if result {
+			c.JSON(401, gin.H{
+				"msg" : "not exist",
+			})
+			return
+		}
 	}
-
 	// 문자 전송하기
 	requestId := util.SendMsg(pnum)
 
@@ -234,6 +245,45 @@ func (ac *AuthController) DeleteUser(c *gin.Context) {
 	userId := util.StringToObjectId(userIdString.(string))
 
 	err := ac.UserModel.DeleteMyAccount(userId)
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"err" : err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"msg" : "success",
+	})
+}
+
+
+
+// 비밀번호 변경 함수 -> 번호 요청하고, 인증 한 후에 진입 가능
+func (ac *AuthController) ChangePassword(c *gin.Context) {
+	// verifyCode와 requestId를 가지고 해당 path에 요청할 수 있는지 확인한다.
+	verifyCode := c.Query("verifycode")
+	requestId := c.Query("requestid")
+	err := util.PwdCompare(verifyCode, requestId)
+	util.ErrorHandler(err)
+	// 변경하고자 하는 비밀번호를 받는다.
+	body := c.Request.Body
+	dataMap := make(map[string]interface{})
+
+	data, err := ioutil.ReadAll(body)
+	util.ErrorHandler(err)
+
+	json.Unmarshal(data, &dataMap)
+	pnum := dataMap["pnum"].(string)
+	pwd := dataMap["password"].(string)
+
+	// 비밀번호 변경 진행
+	// 패스워드를 해시화 해주자
+	hashedPwd := util.HashPwd(pwd)
+	
+	// pnum을 기준으로 user를 찾아서 해시된 패스워드로 업데이트해주자
+	err = ac.UserModel.ChangePassword(pnum, string(hashedPwd))
 
 	if err != nil {
 		c.JSON(400, gin.H{

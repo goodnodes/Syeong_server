@@ -114,11 +114,7 @@ func (um *UserModel) AddMyPool(userId, poolId primitive.ObjectID) error {
 	}}}}
 	_, err := um.UserCollection.UpdateOne(context.TODO(), filter, update)
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 
@@ -130,11 +126,7 @@ func (um *UserModel) DeleteMyPool(userId, poolId primitive.ObjectID) error {
 	}}}}
 	_, err := um.UserCollection.UpdateOne(context.TODO(), filter, update)
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 
@@ -164,11 +156,7 @@ func (um *UserModel) EditMyGoal(goal string, userId primitive.ObjectID) error {
 
 	_, err := um.UserCollection.UpdateOne(context.TODO(), filter, update)
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 
@@ -185,11 +173,7 @@ func (um *UserModel) EditMyNickName(userId primitive.ObjectID, nickName string) 
 
 	_, err := um.UserCollection.UpdateOne(context.TODO(), filter, update)
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 
@@ -200,9 +184,22 @@ func (um *UserModel) DeleteMyAccount(userId primitive.ObjectID) error {
 	}}
 	_, err := um.UserCollection.DeleteOne(context.TODO(), filter)
 
-	if err != nil {
-		return err
-	}
+	return err
+}
 
-	return nil
+
+// 비밀번호 변경하는 메서드
+func (um *UserModel) ChangePassword(pnum, password string) error {
+	filter := bson.D{{
+		Key : "privateinfo.pnum", Value : pnum,
+	}}
+	update := bson.D{{
+		Key : "$set", Value : bson.D{{
+			Key : "privateinfo.password", Value : password,
+		}},
+	}}
+
+	_, err := um.UserCollection.UpdateOne(context.TODO(), filter, update)
+	
+	return err
 }

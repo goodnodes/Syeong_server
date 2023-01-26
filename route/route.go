@@ -32,13 +32,14 @@ func (p *Router) Idx() *gin.Engine {
 		// 임시저장한 번호가 일치하면 이후 로직 가능, 다르면 임시저장 파일 삭제하고 abort
 		// 시간 단위로 문자를 보낼때의 시간도 같이 저장해놨다가 시간이 오바되면 거절하는 로직도 추가해야함
 		
-		// 번호인증 요청 -> 여기를 통해 메시지를 요청하고
+		// 번호인증 요청 -> 여기를 통해 회원가입/비밀번호 변경시 메시지를 요청한다.
 		authGroup.POST("/request", p.ctl.Auth.RequestNumber)
 		// 번호인증 확인 -> 여기를 통해 코드 입력값을 확인한다.
 		authGroup.POST("/check", p.ctl.Auth.CheckNumber)
 		// 회원가입 -> 앞의 두 단계를 정상진행하면, 아래로 가게 된다.
 		authGroup.POST("/signup", p.ctl.Auth.SignUp)
-
+		// 비밀번호 찾기(변경)
+		authGroup.POST("/password", p.ctl.Auth.ChangePassword)
 		// 로그인
 		authGroup.POST("", p.ctl.Auth.Login)
 		// 로그아웃
