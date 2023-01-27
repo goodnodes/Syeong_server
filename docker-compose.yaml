@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+  gin-server:
+    build: ./
+    restart: "no"
+    command: go run main.go
+    container_name: redis
+    hostname: wemixon-redis
+    labels:
+      - "name=wemixon-redis"
+      - "mode=standalone"
+    ports:
+      - 6379:6379
+    volumes:
+      - ./docker/redis/data:/data
+  mongodb:
+    image: mongo:latest
+    restart: "no"
+    container_name: wemixon-mongo
+    labels:
+      - "name=wemixon-mongo"
+      - "mode=standalone"
+    ports:
+      - 27017:27017
+    volumes:
+      - ./docker/mongo/data/db:/data/db

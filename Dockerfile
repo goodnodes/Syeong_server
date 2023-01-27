@@ -1,8 +1,19 @@
-FROM mongo:latest
-
-VOLUME [ "/docker/mongo/data/db" ]
+FROM mongo
 
 WORKDIR /data/db
+
+COPY ./pools.json ../
+
+# RUN mongoimport -d syeong-db -c pools --jsonArray --file="/data/pools.json"
+
+# RUN mongoimport --uri="mongodb://localhost:27017/syeong-db" --collection=pools --jsonArray --file="/data/db/pools.json"
+
+# RUN mongod
+
+# ENTRYPOINT [ "mongosh" ]
+
+# CMD mongoimport -d syeong-db -c pools --jsonArray --file="/data/db/pools.json"
+
 
 # 이미지 생성
 # docker build -t syeong-mongo .
