@@ -1,7 +1,7 @@
 package controller
 
 import (
-	// "fmt"
+	"fmt"
 	"encoding/json"
 	"io/ioutil"
 
@@ -71,6 +71,8 @@ func(uc *UserController) DeleteMyPool(c *gin.Context) {
 // 나의 정보를 가져오는 메서드
 func(uc *UserController) GetMyInfo(c *gin.Context) {
 	userIdString := c.MustGet("userid")
+
+	fmt.Println(userIdString)
 
 	userId := util.StringToObjectId(userIdString.(string))
 
