@@ -17,6 +17,9 @@ func GetReviewController(um *model.UserModel, rm *model.ReviewModel, pm *model.P
 	return rc
 }
 
-func (*ReviewController) ReviewTest(c *gin.Context) {
+
+
+// 리뷰 작성하는 함수
+func (*ReviewController) AddReview(c *gin.Context) {
 	c.IndentedJSON(200, gin.H{"msg" : "review router"})
 }

@@ -72,15 +72,15 @@ func (p *Router) Idx() *gin.Engine {
 	// 	poolGroup.GET("/:poolid", p.ctl.Pool ...)
 	}
 
-	// reviewGroup := r.Group("/review")
-	// {
-	// 	// 리뷰 추가하기
-	// 	reviewGroup.POST("", p.ctl.Review ...)
-	// 	// 리뷰 수정하기
+	reviewGroup := r.Group("/review").Use(middleware.VerifyAccessToken())
+	{
+		// 리뷰 추가하기
+		reviewGroup.POST("", p.ctl.Review.AddReview)
+		// 리뷰 수정하기
 	// 	reviewGroup.PATCH("", p.ctl.Review ...)
-	// 	// 리뷰 삭제하기
+		// 리뷰 삭제하기
 	// 	reviewGroup.DELETE("/:reviewid", p.ctl.Review ...)
-	// }
+	}
 
 	// admin 그룹을 추가하여 pool 정보 업데이트 등을 다루는 메서드를 만들어야함
 	adminGroup := r.Group("/admin")

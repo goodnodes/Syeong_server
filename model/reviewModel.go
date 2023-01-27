@@ -39,3 +39,6 @@ func GetReviewModel(db, host, model string) (*ReviewModel, error) {
 	}
 	return rm, nil
 }
+
+
+// 리뷰 작성하는 메서드
