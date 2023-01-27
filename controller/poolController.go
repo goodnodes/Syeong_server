@@ -1,7 +1,7 @@
 package controller
 
 import (
-	// "fmt"
+	"fmt"
 
 	"github.com/goodnodes/Syeong_server/util"
 	"github.com/gin-gonic/gin"
@@ -90,8 +90,11 @@ func (pc *PoolController) GetGEO(c *gin.Context) {
 		return
 	}
 
+	// fmt.Println(pools)
+
 	// 모든 수영장 요소에 대해서 과정을 진행한다.
 	for _, value := range pools {
-		
+		geo := util.GetGEO(value.Address)
+		fmt.Println(geo)
 	}
 }

@@ -31,6 +31,7 @@ type Pool struct {
 	LaneNum int `bson:"lanenum" json:"lanenum"`
 	CostInfoUrl string `bson:"costinfourl" json:"costinfourl"`
 	FreeSwimInfoUrl string `bson:"freeswiminfourl" json:"freeswiminfourl"`
+	Geo GEO `bson:"geo" json:"geo"`
 }
 
 func GetPoolModel(db, host, model string) (*PoolModel, error) {

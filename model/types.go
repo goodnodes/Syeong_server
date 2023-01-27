@@ -10,3 +10,8 @@ type CheckSMSStruct struct {
 	RequestId string `json:"requestid"`
 	RequestTime int `json:"requesttime"`
 }
+
+type GEO struct {
+	Latitude string `bson:"latitude" json:"latitude"`
+	Longitude string `bson:"longitude" json:"longitude"`
+}
