@@ -5,7 +5,7 @@ import (
 	// "encoding/json"
 	"context"
 	
-	// "go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -47,4 +47,23 @@ func (rm *ReviewModel) AddReview(review *Review) error {
 	_, err := rm.ReviewCollection.InsertOne(context.TODO(), review)
 
 	return err
+}
+
+
+// 유저가 작성한 리뷰 가져오는 메서드
+func (rm *ReviewModel) GetUserReview(userId primitive.ObjectID) ([]Review, error) {
+	filter := bson.D{{
+		Key : "userid", Value : userId,
+	}}
+	cursor, err := rm.ReviewCollection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+
+	var reviews []Review
+	if err = cursor.All(context.TODO(), &reviews); err != nil {
+		return nil, err
+	}
+
+	return reviews, nil
 }

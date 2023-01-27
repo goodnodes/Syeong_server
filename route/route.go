@@ -76,6 +76,8 @@ func (p *Router) Idx() *gin.Engine {
 	{
 		// 리뷰 추가하기
 		reviewGroup.POST("", p.ctl.Review.AddReview)
+		// 유저가 작성한 리뷰 가져오기
+		reviewGroup.GET("", p.ctl.Review.GetUserReview)
 		// 리뷰 수정하기
 	// 	reviewGroup.PATCH("", p.ctl.Review ...)
 		// 리뷰 삭제하기

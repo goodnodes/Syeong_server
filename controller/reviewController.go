@@ -23,7 +23,7 @@ func GetReviewController(um *model.UserModel, rm *model.ReviewModel, pm *model.P
 
 
 
-// 리뷰 작성하는 함수
+// 리뷰 작성하는 메서드
 func (rc *ReviewController) AddReview(c *gin.Context) {
 	review := &model.Review{}
 	userId := util.StringToObjectId(c.MustGet("userid").(string))
@@ -47,5 +47,23 @@ func (rc *ReviewController) AddReview(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"msg" : "success",
+	})
+}
+
+
+// 유저가 작성한 리뷰 가져오는 메서드
+func (rc *ReviewController) GetUserReview(c *gin.Context) {
+	userId := util.StringToObjectId(c.MustGet("userid").(string))
+	reviews, err := rc.ReviewModel.GetUserReview(userId)
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error" : err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"reviews" : reviews,
 	})
 }
