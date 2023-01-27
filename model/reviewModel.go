@@ -21,8 +21,9 @@ type Review struct {
 	ID primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
 	PoolId primitive.ObjectID `bson:"poolid" json:"poolid"`
 	UserId primitive.ObjectID `bson:"userid" json:"userid"`
-	KeywordReview string `bson:"keywordreview" json:"keywordreview"`
 	TextReview string `bson:"textreview" json:"textreview"`
+	KeywordReviews  []string `bson:"keywordreviews" json:"keywordreviews"`
+	CreatedAt string `bson:"createdat" json:"createdat"`
 }
 
 // Review를 다루는 model 객체를 만들어 return 해주는 함수
@@ -42,3 +43,8 @@ func GetReviewModel(db, host, model string) (*ReviewModel, error) {
 
 
 // 리뷰 작성하는 메서드
+func (rm *ReviewModel) AddReview(review *Review) error {
+	_, err := rm.ReviewCollection.InsertOne(context.TODO(), review)
+
+	return err
+}
