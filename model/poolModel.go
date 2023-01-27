@@ -90,3 +90,16 @@ func(pm *PoolModel) GetAllPool() ([]Pool, error) {
 
 
 // admin -> geo code 추가하는 메서드
+func(pm *PoolModel) UpdateGEO(poolId primitive.ObjectID, geo *GEO) error {
+	filter := bson.D{{
+		Key : "_id", Value : poolId,
+	}}
+	update := bson.D{{
+		Key : "$set", Value : bson.D{{
+			Key : "geo", Value : geo,
+		}},
+	}}
+
+	_, err := pm.PoolCollection.UpdateOne(context.TODO(), filter, update)
+	return err
+}

@@ -44,5 +44,7 @@ func GetGEO(address string) *model.GEO {
 		Longitude : longitude,
 	}
 
+	fmt.Println(geo)
+
 	return &geo
 }
