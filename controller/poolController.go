@@ -20,10 +20,8 @@ func GetPoolController(um *model.UserModel, rm *model.ReviewModel, pm *model.Poo
 	return pc
 }
 
-func (pc *PoolController) PoolTest(c *gin.Context) {
-	c.IndentedJSON(200, gin.H{"msg" : "pool router"})
-}
 
+// admin -> 여러개의 풀 정보를 한번에 넣는 메서드
 func (pc *PoolController) InsertManyPool(c *gin.Context) {
 	var pools []interface{}
 	err := c.ShouldBindJSON(&pools)
@@ -43,6 +41,8 @@ func (pc *PoolController) InsertManyPool(c *gin.Context) {
 	})
 }
 
+
+// 풀 정보를 업데이트하는 메서드 (대체)
 func (pc *PoolController) ReplacePool(c *gin.Context) {
 	pool := &model.Pool{}
 	err := c.ShouldBindJSON(pool)
@@ -63,6 +63,7 @@ func (pc *PoolController) ReplacePool(c *gin.Context) {
 }
 
 
+// 모든 풀 정보를 가져오는 메서드
 func (pc *PoolController) GetAll(c *gin.Context) {
 	pools, err := pc.PoolModel.GetAllPool()
 	if err != nil {
@@ -75,4 +76,22 @@ func (pc *PoolController) GetAll(c *gin.Context) {
 	c.JSON(200, gin.H {
 		"pools" : pools,
 	})
+}
+
+
+// admin -> geo code를 가져와서 업데이트해주는 메서드
+func (pc *PoolController) GetGEO(c *gin.Context) {
+	// 먼저 전체 수영장 정보를 가져온다
+	pools, err := pc.PoolModel.GetAllPool()
+	if err != nil {
+		c.JSON(400, gin.H{
+			"err" : err.Error(),
+		})
+		return
+	}
+
+	// 모든 수영장 요소에 대해서 과정을 진행한다.
+	for _, value := range pools {
+		
+	}
 }

@@ -12,6 +12,11 @@ type Config struct {
 		Serviceid string
 	}
 
+	GEO struct {
+		Clientid string
+		Clientsecret string
+	}
+
 	Token struct {
 		Secret string
 	}

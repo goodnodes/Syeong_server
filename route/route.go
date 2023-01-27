@@ -89,6 +89,8 @@ func (p *Router) Idx() *gin.Engine {
 		adminGroup.POST("", p.ctl.Pool.InsertManyPool)
 		// 수영장 정보 업데이트하기
 		adminGroup.PATCH("", p.ctl.Pool.ReplacePool)
+		// DB에 geo code 업데이트하는 메서드
+		adminGroup.GET("", p.ctl.Pool.GetGEO)
 	}
 
 	return r

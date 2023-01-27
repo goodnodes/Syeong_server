@@ -86,3 +86,6 @@ func(pm *PoolModel) GetAllPool() ([]Pool, error) {
 
 	return pools, nil
 }
+
+
+// admin -> geo code 추가하는 메서드
