@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	// "fmt"
 
 	"github.com/gin-gonic/gin"
 	// "github.com/goodnodes/Syeong_server/controller"
@@ -11,6 +10,7 @@ import (
 
 var cfg = config.GetConfig("config/config.toml")
 var secret = cfg.Token.Secret
+var adminSecret = cfg.Server.Admin
 
 // CORS 설정 미들웨어
 func CORS() gin.HandlerFunc {
@@ -72,6 +72,21 @@ func VerifyAccessToken() gin.HandlerFunc {
 
 		c.Set("userid", claims["userid"])
 		c.Set("nickname", claims["nickname"])
+		c.Next()
+	}
+}
+
+
+func AdminOnly() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		query := c.Query("password")
+		if query != adminSecret {
+			c.JSON(401, gin.H{
+				"msg" : "not valid admin",
+			})
+			c.Abort()
+		}
+
 		c.Next()
 	}
 }

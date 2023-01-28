@@ -26,6 +26,7 @@ type Config struct {
 		Port string
 		DBname string
 		Host string
+		Admin string
 	}
 
 	DB map[string]map[string]string
