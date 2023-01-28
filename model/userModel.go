@@ -182,6 +182,7 @@ func (um *UserModel) DeleteMyAccount(userId primitive.ObjectID) error {
 	filter := bson.D{{
 		Key : "_id", Value : userId,
 	}}
+	// 내 정보 삭제
 	_, err := um.UserCollection.DeleteOne(context.TODO(), filter)
 
 	return err

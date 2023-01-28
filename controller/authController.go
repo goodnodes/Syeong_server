@@ -13,10 +13,14 @@ import (
 
 type AuthController struct {
 	UserModel *model.UserModel
+	ReviewModel *model.ReviewModel
 }
 
-func GetAuthController(um *model.UserModel) *AuthController {
-	ac := &AuthController{UserModel : um}
+func GetAuthController(um *model.UserModel, rm *model.ReviewModel) *AuthController {
+	ac := &AuthController{
+		UserModel : um,
+		ReviewModel : rm,
+	}
 
 	return ac
 }
@@ -246,6 +250,14 @@ func (ac *AuthController) DeleteUser(c *gin.Context) {
 
 	err := ac.UserModel.DeleteMyAccount(userId)
 
+	if err != nil {
+		c.JSON(400, gin.H{
+			"err" : err.Error(),
+		})
+		return
+	}
+
+	err = ac.ReviewModel.DeleteMyReviews(userId)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"err" : err.Error(),

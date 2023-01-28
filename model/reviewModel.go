@@ -118,3 +118,12 @@ func (rm *ReviewModel) DeleteReview(reviewId primitive.ObjectID) error {
 	_, err := rm.ReviewCollection.DeleteOne(context.TODO(), filter)
 	return err
 }
+
+
+func (rm *ReviewModel) DeleteMyReviews(userId primitive.ObjectID) error {
+	filter := bson.D{{
+		Key : "userid", Value : userId,
+	}}
+	_, err := rm.ReviewCollection.DeleteMany(context.TODO(), filter)
+	return err
+}
