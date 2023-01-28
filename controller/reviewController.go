@@ -1,7 +1,6 @@
 package controller
 
 import (
-	// "fmt"
 	"time"
 	"sort"
 
@@ -90,3 +89,68 @@ func (rc *ReviewController) GetPoolReview(c *gin.Context) {
 }
 
 
+// 리뷰 수정하는 메서드
+func (rc *ReviewController) UpdateReview(c *gin.Context) {
+	userId := c.MustGet("userid").(string)
+	review := &model.Review{}
+	c.ShouldBindJSON(review)
+
+	// 요청 전송자와 리뷰 작성자가 다르면 abort
+	if review.UserId != util.StringToObjectId(userId) {
+		c.JSON(401, gin.H{
+			"err" : "invalid request",
+		})
+		return
+	}
+
+	sort.Strings(review.KeywordReviews)
+
+	// 수정일자 추가
+	unixTime := time.Now().Unix()
+	t := time.Unix(unixTime, 0)
+	timeString := t.Format("2006-01-02 15:04:05")
+	review.EditDate = timeString
+
+	err := rc.ReviewModel.UpdateReview(review)
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error" : err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"msg" : "success",
+	})
+}
+
+
+// 리뷰 삭제하는 메서드
+func (rc *ReviewController) DeleteReview(c *gin.Context) {
+	reviewId := c.Query("reviewid")
+	writerId := c.Query("userid")
+	userIdString := c.MustGet("userid").(string)
+
+	// 요청을 보낸 사람과 리뷰 작성자가 같은 사람인지 확인
+	if writerId != userIdString {
+		c.JSON(401, gin.H{
+			"err" : "invalid request",
+		})
+		return
+	}
+
+	// 리뷰 삭제
+	err := rc.ReviewModel.DeleteReview(util.StringToObjectId(reviewId))
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error" : err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"msg" : "success",
+	})
+}

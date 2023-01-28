@@ -80,11 +80,10 @@ func (p *Router) Idx() *gin.Engine {
 		reviewGroup.GET("/user", p.ctl.Review.GetUserReview)
 		// 수영장별 리뷰 가져오기
 		reviewGroup.GET("/pool", p.ctl.Review.GetPoolReview)
-
 		// 리뷰 수정하기
-	// 	reviewGroup.PATCH("", p.ctl.Review ...)
+		reviewGroup.PATCH("", p.ctl.Review.UpdateReview)
 		// 리뷰 삭제하기
-	// 	reviewGroup.DELETE("/:reviewid", p.ctl.Review ...)
+		reviewGroup.DELETE("", p.ctl.Review.DeleteReview)
 	}
 
 	// admin 그룹을 추가하여 pool 정보 업데이트 등을 다루는 메서드를 만들어야함

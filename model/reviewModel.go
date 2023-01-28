@@ -23,6 +23,7 @@ type Review struct {
 	UserId primitive.ObjectID `bson:"userid" json:"userid"`
 	TextReview string `bson:"textreview" json:"textreview"`
 	KeywordReviews  []string `bson:"keywordreviews" json:"keywordreviews"`
+	EditDate string `bson:"editdate" json:"editdate"`
 	CreatedAt string `bson:"createdat" json:"createdat"`
 }
 
@@ -85,4 +86,35 @@ func (rm *ReviewModel) GetPoolReview(poolId primitive.ObjectID) ([]Review, error
 	}
 
 	return reviews, nil
+}
+
+
+// 리뷰 업데이트하는 메서드
+func (rm *ReviewModel) UpdateReview(review *Review) error {
+	filter := bson.D{{
+		Key : "_id", Value : review.ID,
+	}}
+	update := bson.D{{
+		Key : "$set", Value : bson.D{{
+			Key : "textreview", Value : review.TextReview,
+		}, {
+			Key : "keywordreviews", Value : review.KeywordReviews,
+		}, {
+			Key : "editdate", Value : review.EditDate,
+		}},
+	}}
+
+	_, err := rm.ReviewCollection.UpdateOne(context.TODO(), filter, update)
+
+	return err
+}
+
+
+// 리뷰 삭제하는 메서드
+func (rm *ReviewModel) DeleteReview(reviewId primitive.ObjectID) error {
+	filter := bson.D{{
+		Key : "_id", Value : reviewId,
+	}}
+	_, err := rm.ReviewCollection.DeleteOne(context.TODO(), filter)
+	return err
 }
