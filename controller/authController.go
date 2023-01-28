@@ -7,7 +7,6 @@ import (
 	"github.com/goodnodes/Syeong_server/util"
 	"io"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 )
 
@@ -60,8 +59,8 @@ func (ac *AuthController) Login(c *gin.Context) {
 
 	// 같다면, RefreshToken과 AccessToken을 발급한다.
 	// 이 때 Token의 claims에 들어가는 id는 실제 id가 아닌 db ObjectId로 할 것이다.
-	accessToken := util.GetAccessToken(user.ID.Hex())
-	refreshToken := util.GetRefreshToken(user.ID.Hex())
+	accessToken := util.GetAccessToken(user.ID.Hex(), user.PrivateInfo.NickName)
+	refreshToken := util.GetRefreshToken(user.ID.Hex(), user.PrivateInfo.NickName)
 	c.SetCookie("access-token", accessToken, 60*60*24, "/", "localhost", false, true)
 	// c.SetCookie("access-token", accessToken, 10, "/", "localhost", false, true)
 	// 여기는 리프레시토큰을 넣어줘야지
@@ -77,7 +76,7 @@ func (ac *AuthController) Login(c *gin.Context) {
 func (ac *AuthController) VerifyToken(c *gin.Context) {
 	// RefreshToken 검증작업
 	// 여기서 검증이 안되면 에러 반환, 검증 이후 남은 유효기간이 7일 이하면 새 토큰이 발급되어있음
-	userId, err := util.VerifyRefreshToken(c)
+	userId, nickName, err := util.VerifyRefreshToken(c)
 	if err != nil {
 		c.JSON(401, gin.H {
 			"msg" : err.Error(),
@@ -86,7 +85,7 @@ func (ac *AuthController) VerifyToken(c *gin.Context) {
 	}
 
 	// 위에서 이미 refreshToken이 검증되었기 때문에, AccessToken을 발급해준다.
-	newAccessToken := util.GetAccessToken(userId)
+	newAccessToken := util.GetAccessToken(userId, nickName)
 	c.SetCookie("access-token", newAccessToken, 60*60*24, "/", "localhost", false, true)
 	// c.SetCookie("access-token", newAccessToken, 10, "/", "localhost", false, true)
 
@@ -106,7 +105,7 @@ func (ac *AuthController) RequestNumber(c *gin.Context) {
 	purpose := c.Query("purpose")
 
 	pnum := unMarshared["pnum"]
-	fmt.Println(pnum)
+
 	// 해당 번호로 가입한 사람이 있는지 확인
 	result := ac.UserModel.CheckUserByPnum(pnum)
 	// 회원가입일 경우, 이미 존재한다면 abort
@@ -193,7 +192,6 @@ func (ac *AuthController) SignUp(c *gin.Context) {
 		panic(err)
 	}
 
-	fmt.Println(user)
 	// 다음은 원하는 닉네임이 이미 존재하는지 중복검사를 한다.
 	result := ac.UserModel.CheckUserByNickName(user.PrivateInfo.NickName)
 	// 이미 있다면 에러 리턴

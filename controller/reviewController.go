@@ -27,6 +27,7 @@ func GetReviewController(um *model.UserModel, rm *model.ReviewModel, pm *model.P
 func (rc *ReviewController) AddReview(c *gin.Context) {
 	review := &model.Review{}
 	userId := util.StringToObjectId(c.MustGet("userid").(string))
+	nickName := c.MustGet("nickname").(string)
 	review.UserId = userId
 	err := c.ShouldBindJSON(review)
 	util.ErrorHandler(err)
@@ -36,7 +37,11 @@ func (rc *ReviewController) AddReview(c *gin.Context) {
 	timeString := t.Format("2006-01-02 15:04:05")
 	review.CreatedAt = timeString
 
+	// 키워드리뷰 정렬
 	sort.Strings(review.KeywordReviews)
+
+	// 작성자 닉네임 추가
+	review.NickName = nickName
 
 	err = rc.ReviewModel.AddReview(review)
 
@@ -103,6 +108,7 @@ func (rc *ReviewController) UpdateReview(c *gin.Context) {
 		return
 	}
 
+	// 키워드리뷰 정렬
 	sort.Strings(review.KeywordReviews)
 
 	// 수정일자 추가

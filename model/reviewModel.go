@@ -21,6 +21,7 @@ type Review struct {
 	ID primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
 	PoolId primitive.ObjectID `bson:"poolid" json:"poolid"`
 	UserId primitive.ObjectID `bson:"userid" json:"userid"`
+	NickName string `bson:"nickname" json:"nickname"`
 	TextReview string `bson:"textreview" json:"textreview"`
 	KeywordReviews  []string `bson:"keywordreviews" json:"keywordreviews"`
 	EditDate string `bson:"editdate" json:"editdate"`

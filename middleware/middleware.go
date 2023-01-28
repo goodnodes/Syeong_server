@@ -71,6 +71,7 @@ func VerifyAccessToken() gin.HandlerFunc {
 		// }
 
 		c.Set("userid", claims["userid"])
+		c.Set("nickname", claims["nickname"])
 		c.Next()
 	}
 }
