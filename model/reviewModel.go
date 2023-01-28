@@ -67,3 +67,22 @@ func (rm *ReviewModel) GetUserReview(userId primitive.ObjectID) ([]Review, error
 
 	return reviews, nil
 }
+
+
+// 수영장 리뷰 가져오는 메서드
+func (rm *ReviewModel) GetPoolReview(poolId primitive.ObjectID) ([]Review, error) {
+	filter := bson.D{{
+		Key : "poolid", Value : poolId,
+	}}
+	cursor, err := rm.ReviewCollection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+
+	var reviews []Review
+	if err = cursor.All(context.TODO(), &reviews); err != nil {
+		return nil, err
+	}
+
+	return reviews, nil
+}

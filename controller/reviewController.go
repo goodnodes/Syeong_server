@@ -3,6 +3,7 @@ package controller
 import (
 	// "fmt"
 	"time"
+	"sort"
 
 	"github.com/goodnodes/Syeong_server/util"
 	"github.com/gin-gonic/gin"
@@ -36,6 +37,8 @@ func (rc *ReviewController) AddReview(c *gin.Context) {
 	timeString := t.Format("2006-01-02 15:04:05")
 	review.CreatedAt = timeString
 
+	sort.Strings(review.KeywordReviews)
+
 	err = rc.ReviewModel.AddReview(review)
 
 	if err != nil {
@@ -67,3 +70,23 @@ func (rc *ReviewController) GetUserReview(c *gin.Context) {
 		"reviews" : reviews,
 	})
 }
+
+
+// 수영장별 리뷰 가져오는 메서드
+func (rc *ReviewController) GetPoolReview(c *gin.Context) {
+	poolId := util.StringToObjectId(c.Query("poolid"))
+	reviews, err := rc.ReviewModel.GetPoolReview(poolId)
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error" : err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"reviews" : reviews,
+	})
+}
+
+
