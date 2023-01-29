@@ -160,3 +160,6 @@ func (rc *ReviewController) DeleteReview(c *gin.Context) {
 		"msg" : "success",
 	})
 }
+
+
+// Have to add Review Tags Collection
