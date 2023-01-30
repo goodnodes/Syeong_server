@@ -20,7 +20,7 @@ func main() {
 	userModel := cfg.DB["user"]["model"]
 	reviewModel := cfg.DB["review"]["model"]
 	poolModel := cfg.DB["pool"]["model"]
-	tagsmodel := cfg.DB["tags"]["model"]
+	tagsModel := cfg.DB["tags"]["model"]
 
 	// logger 설정 추가 필요
 

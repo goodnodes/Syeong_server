@@ -1,17 +1,14 @@
 package util
 
 import (
-	"github.com/goodnodes/Syeong_server/model"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-func GetIncTags(args ...string) []model.Tag {
-	var tags []model.Tag
+func GetIncTags(args ...string) []bson.E {
+	var tags []bson.E
 
 	for _, v := range args {
-		tags = append(tags, model.Tag{
-			Key : v,
-			Value : 1,
-		})
+		tags = append(tags, bson.E{v, 1})
 	}
 
 	return tags

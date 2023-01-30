@@ -34,12 +34,16 @@ func GetTagsModel(db, host, model string) (*TagsModel, error) {
 
 
 
-// 태그 업데이트 하는 메서드
-// func (tm *TagsModel) UpdateTags(tagId primitive.ObjectID, tags []string) {
+// // 태그 업데이트 하는 메서드
+// func (tm *TagsModel) UpdateTags(tagId primitive.ObjectID, tags []Tag) {
 // 	filter := bson.D{{
 // 		Key : "_id", Value : tagId,
 // 	}}
-// 	update := bson.D{{
-// 		Key : 
-// 	}}
+// 	update := bson.D{
+// 		Key : "$inc", Value : bson.E{
+// 			tags,
+// 		},
+// 	}
+
+
 // }
