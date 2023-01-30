@@ -80,6 +80,11 @@ func (tm *TagsModel) GetTopTags(tagId primitive.ObjectID) ([]TopTags, error) {
 		keywords = append(keywords, key)
 	}
 
+	// 먼저 정렬을 해준다
+	if len(keywords) >= 2 {
+		sort.Strings(keywords)
+	}
+
 	sort.SliceStable(keywords, func(x, y int) bool {
 		return data[keywords[x]].(int32) > data[keywords[y]].(int32)
 	})

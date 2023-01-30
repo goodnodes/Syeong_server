@@ -121,10 +121,23 @@ func (rm *ReviewModel) DeleteReview(reviewId primitive.ObjectID) error {
 }
 
 
+// 내가 작성한 리뷰를 모두 삭제하는 메서드(회원 탈퇴시)
 func (rm *ReviewModel) DeleteMyReviews(userId primitive.ObjectID) error {
 	filter := bson.D{{
 		Key : "userid", Value : userId,
 	}}
 	_, err := rm.ReviewCollection.DeleteMany(context.TODO(), filter)
 	return err
+}
+
+
+// 리뷰 아이디를 가지고 리뷰를 가져오는 메서드
+func (rm *ReviewModel) GetOneReview(reviewId primitive.ObjectID) (*Review, error) {
+	review := &Review{}
+	filter := bson.D{{
+		Key : "_id", Value : reviewId,
+	}}
+	err := rm.ReviewCollection.FindOne(context.TODO(), filter).Decode(review)
+
+	return review, err
 }

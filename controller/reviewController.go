@@ -1,7 +1,7 @@
 package controller
 
 import (
-	// "fmt"
+	"fmt"
 	"time"
 	"sort"
 
@@ -113,8 +113,10 @@ func (rc *ReviewController) GetPoolReview(c *gin.Context) {
 // 리뷰 수정하는 메서드
 func (rc *ReviewController) UpdateReview(c *gin.Context) {
 	userId := c.MustGet("userid").(string)
-	reviews := []model.Review{}
-	c.ShouldBindJSON(reviews)
+	var reviews []model.Review
+	c.ShouldBindJSON(&reviews)
+
+	fmt.Println(reviews)
 
 	// 요청 전송자와 이전 리뷰 작성자가 다르면 abort
 	if reviews[0].UserId != util.StringToObjectId(userId) {
@@ -176,13 +178,32 @@ func (rc *ReviewController) DeleteReview(c *gin.Context) {
 	// 요청을 보낸 사람과 리뷰 작성자가 같은 사람인지 확인
 	if writerId != userIdString {
 		c.JSON(401, gin.H{
-			"err" : "invalid request",
+			"error" : "invalid request",
 		})
 		return
 	}
 
+	// 먼저 리뷰 아이디를 가지고 리뷰를 가져온다.
+	review, err := rc.ReviewModel.GetOneReview(util.StringToObjectId(reviewId))
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error" : err.Error(),
+		})
+		return
+	}
+	// 리뷰에 있는 tag별 숫자를 Decrease 해준다.
+	decTagsArr := util.GetDecTags(review.KeywordReviews...)
+	err = rc.TagsModel.UpdateTagsCount(review.PoolId, decTagsArr)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error" : err.Error(),
+		})
+		return
+	}
+
+
 	// 리뷰 삭제
-	err := rc.ReviewModel.DeleteReview(util.StringToObjectId(reviewId))
+	err = rc.ReviewModel.DeleteReview(util.StringToObjectId(reviewId))
 
 	if err != nil {
 		c.JSON(400, gin.H{
