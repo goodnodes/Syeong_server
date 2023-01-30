@@ -14,7 +14,7 @@ type PoolController struct {
 	PoolModel *model.PoolModel
 }
 
-func GetPoolController(um *model.UserModel, rm *model.ReviewModel, pm *model.PoolModel) *PoolController {
+func GetPoolController(um *model.UserModel, rm *model.ReviewModel, pm *model.PoolModel, tm *model.TagsModel) *PoolController {
 	pc := &PoolController{UserModel : um, ReviewModel : rm, PoolModel : pm}
 
 	return pc

@@ -15,3 +15,8 @@ type GEO struct {
 	Latitude string `bson:"latitude" json:"latitude"`
 	Longitude string `bson:"longitude" json:"longitude"`
 }
+
+type Tag struct {
+	Key string
+	Value int
+}

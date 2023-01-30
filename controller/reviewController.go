@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"time"
 	"sort"
 
@@ -15,7 +16,7 @@ type ReviewController struct {
 	PoolModel *model.PoolModel
 }
 
-func GetReviewController(um *model.UserModel, rm *model.ReviewModel, pm *model.PoolModel) *ReviewController {
+func GetReviewController(um *model.UserModel, rm *model.ReviewModel, pm *model.PoolModel, tm *model.TagsModel) *ReviewController {
 	rc := &ReviewController{UserModel : um, ReviewModel : rm, PoolModel : pm}
 
 	return rc
@@ -36,6 +37,11 @@ func (rc *ReviewController) AddReview(c *gin.Context) {
 	t := time.Unix(unixTime, 0)
 	timeString := t.Format("2006-01-02 15:04:05")
 	review.CreatedAt = timeString
+
+
+	temp := util.GetIncTags(review.KeywordReviews...)
+	fmt.Println(temp)
+
 
 	// 키워드리뷰 정렬
 	sort.Strings(review.KeywordReviews)

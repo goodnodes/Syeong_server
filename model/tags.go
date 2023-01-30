@@ -6,10 +6,10 @@ import (
 	// "encoding/json"
 	"context"
 	
-	"go.mongodb.org/mongo-driver/bson"
+	// "go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	// "go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type TagsModel struct {
@@ -31,3 +31,15 @@ func GetTagsModel(db, host, model string) (*TagsModel, error) {
 
 	return tm, nil
 }
+
+
+
+// 태그 업데이트 하는 메서드
+// func (tm *TagsModel) UpdateTags(tagId primitive.ObjectID, tags []string) {
+// 	filter := bson.D{{
+// 		Key : "_id", Value : tagId,
+// 	}}
+// 	update := bson.D{{
+// 		Key : 
+// 	}}
+// }
