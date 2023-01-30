@@ -87,7 +87,15 @@ func (rc *ReviewController) GetUserReview(c *gin.Context) {
 func (rc *ReviewController) GetPoolReview(c *gin.Context) {
 	poolId := util.StringToObjectId(c.Query("poolid"))
 	reviews, err := rc.ReviewModel.GetPoolReview(poolId)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error" : err.Error(),
+		})
+		return
+	}
 
+	// 동시에 top tag도 계산하여 리턴해줌
+	topTags, err := rc.TagsModel.GetTopTags(poolId)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error" : err.Error(),
@@ -97,6 +105,7 @@ func (rc *ReviewController) GetPoolReview(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"reviews" : reviews,
+		"topTags" : topTags,
 	})
 }
 
