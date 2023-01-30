@@ -12,10 +12,11 @@ type PoolController struct {
 	UserModel *model.UserModel
 	ReviewModel *model.ReviewModel
 	PoolModel *model.PoolModel
+	TagsModel *model.TagsModel
 }
 
 func GetPoolController(um *model.UserModel, rm *model.ReviewModel, pm *model.PoolModel, tm *model.TagsModel) *PoolController {
-	pc := &PoolController{UserModel : um, ReviewModel : rm, PoolModel : pm}
+	pc := &PoolController{UserModel : um, ReviewModel : rm, PoolModel : pm, TagsModel : tm}
 
 	return pc
 }

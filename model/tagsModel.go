@@ -1,20 +1,19 @@
 package model
 
 import (
-	// "github.com/goodnodes/Syeong_server/util"
-	// "fmt"
+	"fmt"
 	// "encoding/json"
 	"context"
 	
-	// "go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	// "go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type TagsModel struct {
 	Client *mongo.Client
-	PoolCollection *mongo.Collection
+	TagCollection *mongo.Collection
 }
 
 func GetTagsModel(db, host, model string) (*TagsModel, error) {
@@ -26,24 +25,32 @@ func GetTagsModel(db, host, model string) (*TagsModel, error) {
 	} else if err = tm.Client.Ping(context.TODO(), nil); err != nil {
 		return nil, err
 	} else {
-		tm.PoolCollection = tm.Client.Database(db).Collection(model)
+		tm.TagCollection = tm.Client.Database(db).Collection(model)
 	}
 
 	return tm, nil
 }
 
 
-
-// // 태그 업데이트 하는 메서드
-// func (tm *TagsModel) UpdateTags(tagId primitive.ObjectID, tags []Tag) {
-// 	filter := bson.D{{
-// 		Key : "_id", Value : tagId,
-// 	}}
-// 	update := bson.D{
-// 		Key : "$inc", Value : bson.E{
-// 			tags,
-// 		},
-// 	}
-
-
+// 태그 Document를 생성하는 메서드
+// func (tm *TagModel) InsertTags(tagId primitive.ObjectID, tags []bson.E) {
+// 	tm.
 // }
+
+
+// 태그 업데이트 하는 메서드
+func (tm *TagsModel) UpdateTags(tagId primitive.ObjectID, tags []bson.E) error {
+	filter := bson.D{{
+		Key : "_id", Value : tagId,
+	}}
+	update := bson.D{{
+			Key : "$inc", Value : tags,
+		}}
+	// Upsert를 사용하여 문서가 있다면 업데이트하고 없다면 추가 후 업데이트
+	opts := options.FindOneAndUpdate().SetUpsert(true)
+	fmt.Println(update)
+	result := tm.TagCollection.FindOneAndUpdate(context.TODO(), filter, update, opts)
+
+	return result.Err()
+}
+

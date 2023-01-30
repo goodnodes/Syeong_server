@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"fmt"
+	// "fmt"
 	"time"
 	"sort"
 
@@ -14,10 +14,11 @@ type ReviewController struct {
 	UserModel *model.UserModel
 	ReviewModel *model.ReviewModel
 	PoolModel *model.PoolModel
+	TagsModel *model.TagsModel
 }
 
 func GetReviewController(um *model.UserModel, rm *model.ReviewModel, pm *model.PoolModel, tm *model.TagsModel) *ReviewController {
-	rc := &ReviewController{UserModel : um, ReviewModel : rm, PoolModel : pm}
+	rc := &ReviewController{UserModel : um, ReviewModel : rm, PoolModel : pm, TagsModel : tm}
 
 	return rc
 }
@@ -38,10 +39,10 @@ func (rc *ReviewController) AddReview(c *gin.Context) {
 	timeString := t.Format("2006-01-02 15:04:05")
 	review.CreatedAt = timeString
 
-
-	temp := util.GetIncTags(review.KeywordReviews...)
-	fmt.Println(temp)
-
+	// Keyword reviews를 가지고 각각의 bson.E 객체를 만들어 배열로 리턴하는 함수
+	tagsArr := util.GetIncTags(review.KeywordReviews...)
+	
+	rc.TagsModel.UpdateTags(review.PoolId, tagsArr)
 
 	// 키워드리뷰 정렬
 	sort.Strings(review.KeywordReviews)
