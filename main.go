@@ -20,6 +20,7 @@ func main() {
 	userModel := cfg.DB["user"]["model"]
 	reviewModel := cfg.DB["review"]["model"]
 	poolModel := cfg.DB["pool"]["model"]
+	tagsmodel := cfg.DB["tags"]["model"]
 
 	// logger 설정 추가 필요
 
@@ -38,7 +39,12 @@ func main() {
 		panic(err)
 	}
 
-	controller := controller.GetNewController(um, pm, rm)
+	tm, err := model.GetTagsModel(dbName, host, tagsModel)
+	if err != nil {
+		panic(err)
+	}
+
+	controller := controller.GetNewController(um, pm, rm, tm)
 
 	router := route.GetRouter(controller)
 
