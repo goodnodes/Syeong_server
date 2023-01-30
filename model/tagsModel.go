@@ -40,7 +40,7 @@ func GetTagsModel(db, host, model string) (*TagsModel, error) {
 
 
 // 태그 업데이트 하는 메서드
-func (tm *TagsModel) UpdateTags(tagId primitive.ObjectID, tags []bson.E) error {
+func (tm *TagsModel) UpdateTagsCount(tagId primitive.ObjectID, tags []bson.E) error {
 	filter := bson.D{{
 		Key : "_id", Value : tagId,
 	}}

@@ -40,9 +40,9 @@ func (rc *ReviewController) AddReview(c *gin.Context) {
 	review.CreatedAt = timeString
 
 	// Keyword reviews를 가지고 각각의 bson.E 객체를 만들어 배열로 리턴하는 함수
-	tagsArr := util.GetIncTags(review.KeywordReviews...)
+	incTagsArr := util.GetIncTags(review.KeywordReviews...)
 	
-	rc.TagsModel.UpdateTags(review.PoolId, tagsArr)
+	rc.TagsModel.UpdateTagsCount(review.PoolId, incTagsArr)
 
 	// 키워드리뷰 정렬
 	sort.Strings(review.KeywordReviews)
@@ -113,28 +113,47 @@ func (rc *ReviewController) GetPoolReview(c *gin.Context) {
 // 리뷰 수정하는 메서드
 func (rc *ReviewController) UpdateReview(c *gin.Context) {
 	userId := c.MustGet("userid").(string)
-	review := &model.Review{}
-	c.ShouldBindJSON(review)
+	reviews := []model.Review{}
+	c.ShouldBindJSON(reviews)
 
-	// 요청 전송자와 리뷰 작성자가 다르면 abort
-	if review.UserId != util.StringToObjectId(userId) {
+	// 요청 전송자와 이전 리뷰 작성자가 다르면 abort
+	if reviews[0].UserId != util.StringToObjectId(userId) {
 		c.JSON(401, gin.H{
 			"err" : "invalid request",
 		})
 		return
 	}
 
-	// 키워드리뷰 정렬
-	sort.Strings(review.KeywordReviews)
+	// 이전 리뷰의 tags count를 Decrease
+	decTagsArr := util.GetDecTags(reviews[0].KeywordReviews...)
+	err := rc.TagsModel.UpdateTagsCount(reviews[0].PoolId, decTagsArr)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"err" : err.Error(),
+		})
+		return
+	}
+	
+	// 새 키워드 리뷰 정렬
+	sort.Strings(reviews[1].KeywordReviews)
 
 	// 수정일자 추가
 	unixTime := time.Now().Unix()
 	t := time.Unix(unixTime, 0)
 	timeString := t.Format("2006-01-02 15:04:05")
-	review.EditDate = timeString
+	reviews[1].EditDate = timeString
 
-	err := rc.ReviewModel.UpdateReview(review)
+	// 새 리뷰의 tags count를 Increase
+	incTagsArr := util.GetIncTags(reviews[1].KeywordReviews...)
+	err = rc.TagsModel.UpdateTagsCount(reviews[1].PoolId, incTagsArr)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"err" : err.Error(),
+		})
+		return
+	}
 
+	err = rc.ReviewModel.UpdateReview(&reviews[1])
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error" : err.Error(),
