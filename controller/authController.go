@@ -13,12 +13,14 @@ import (
 type AuthController struct {
 	UserModel *model.UserModel
 	ReviewModel *model.ReviewModel
+	TagsModel *model.TagsModel
 }
 
-func GetAuthController(um *model.UserModel, rm *model.ReviewModel) *AuthController {
+func GetAuthController(um *model.UserModel, rm *model.ReviewModel, tm *model.TagsModel) *AuthController {
 	ac := &AuthController{
 		UserModel : um,
 		ReviewModel : rm,
+		TagsModel : tm,
 	}
 
 	return ac
@@ -246,8 +248,8 @@ func (ac *AuthController) DeleteUser(c *gin.Context) {
 	userIdString := c.MustGet("userid")
 	userId := util.StringToObjectId(userIdString.(string))
 
-	err := ac.UserModel.DeleteMyAccount(userId)
-
+	// 먼저 유저가 작성한 리뷰를 모두 가져온다.
+	reviews, err := ac.ReviewModel.GetUserReview(userId)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
@@ -255,7 +257,27 @@ func (ac *AuthController) DeleteUser(c *gin.Context) {
 		return
 	}
 
-	err = ac.ReviewModel.DeleteMyReviews(userId)
+	if len(reviews) > 0{
+		// 리뷰마다 돌며 태그로 카운트 된 숫자를 감소해준다.
+		for _, review := range reviews {
+			if len(review.KeywordReviews) == 0 {
+				continue
+			}
+			decTagsArr := util.GetDecTags(review.KeywordReviews...)
+			ac.TagsModel.UpdateTagsCount(review.PoolId, decTagsArr)
+		}
+
+		// 리뷰를 모두 지워준다.
+		err = ac.ReviewModel.DeleteMyReviews(userId)
+		if err != nil {
+			c.JSON(400, gin.H{
+				"err" : err.Error(),
+			})
+			return
+		}
+	}	
+
+	err = ac.UserModel.DeleteMyAccount(userId)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"err" : err.Error(),

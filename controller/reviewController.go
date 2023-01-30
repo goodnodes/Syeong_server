@@ -39,13 +39,17 @@ func (rc *ReviewController) AddReview(c *gin.Context) {
 	timeString := t.Format("2006-01-02 15:04:05")
 	review.CreatedAt = timeString
 
-	// Keyword reviews를 가지고 각각의 bson.E 객체를 만들어 배열로 리턴하는 함수
-	incTagsArr := util.GetIncTags(review.KeywordReviews...)
-	
-	rc.TagsModel.UpdateTagsCount(review.PoolId, incTagsArr)
+	// keyword reviews가 있을때 해당
+	if len(review.KeywordReviews) > 0{
+		// Keyword reviews를 가지고 각각의 bson.E 객체를 만들어 배열로 리턴하는 함수
+		incTagsArr := util.GetIncTags(review.KeywordReviews...)
+		
+		rc.TagsModel.UpdateTagsCount(review.PoolId, incTagsArr)
 
-	// 키워드리뷰 정렬
-	sort.Strings(review.KeywordReviews)
+		// 키워드리뷰 정렬
+		sort.Strings(review.KeywordReviews)
+	}
+	
 
 	// 작성자 닉네임 추가
 	review.NickName = nickName
@@ -126,18 +130,33 @@ func (rc *ReviewController) UpdateReview(c *gin.Context) {
 		return
 	}
 
-	// 이전 리뷰의 tags count를 Decrease
-	decTagsArr := util.GetDecTags(reviews[0].KeywordReviews...)
-	err := rc.TagsModel.UpdateTagsCount(reviews[0].PoolId, decTagsArr)
-	if err != nil {
-		c.JSON(500, gin.H{
-			"err" : err.Error(),
-		})
-		return
+	// 이전 키워드 리뷰가 있을때 해당됨
+	if len(reviews[0].KeywordReviews) > 0 {
+		// 이전 리뷰의 tags count를 Decrease
+		decTagsArr := util.GetDecTags(reviews[0].KeywordReviews...)
+		err := rc.TagsModel.UpdateTagsCount(reviews[0].PoolId, decTagsArr)
+		if err != nil {
+			c.JSON(500, gin.H{
+				"err" : err.Error(),
+			})
+			return
+		}
 	}
-	
-	// 새 키워드 리뷰 정렬
-	sort.Strings(reviews[1].KeywordReviews)
+
+	// 새 키워드 리뷰가 있을때 해당됨
+	if len(reviews[1].KeywordReviews) > 0{
+		// 새 키워드 리뷰 정렬
+		sort.Strings(reviews[1].KeywordReviews)
+		// 새 리뷰의 tags count를 Increase
+		incTagsArr := util.GetIncTags(reviews[1].KeywordReviews...)
+		err := rc.TagsModel.UpdateTagsCount(reviews[1].PoolId, incTagsArr)
+		if err != nil {
+			c.JSON(500, gin.H{
+				"err" : err.Error(),
+			})
+			return
+		}
+	}
 
 	// 수정일자 추가
 	unixTime := time.Now().Unix()
@@ -145,17 +164,7 @@ func (rc *ReviewController) UpdateReview(c *gin.Context) {
 	timeString := t.Format("2006-01-02 15:04:05")
 	reviews[1].EditDate = timeString
 
-	// 새 리뷰의 tags count를 Increase
-	incTagsArr := util.GetIncTags(reviews[1].KeywordReviews...)
-	err = rc.TagsModel.UpdateTagsCount(reviews[1].PoolId, incTagsArr)
-	if err != nil {
-		c.JSON(500, gin.H{
-			"err" : err.Error(),
-		})
-		return
-	}
-
-	err = rc.ReviewModel.UpdateReview(&reviews[1])
+	err := rc.ReviewModel.UpdateReview(&reviews[1])
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error" : err.Error(),

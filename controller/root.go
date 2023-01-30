@@ -16,7 +16,7 @@ func GetNewController (um *model.UserModel, pm *model.PoolModel, rm *model.Revie
 			User : GetUserController(um, rm, pm),
 			Pool : GetPoolController(um, rm, pm, tm),
 			Review : GetReviewController(um, rm, pm, tm),
-			Auth : GetAuthController(um, rm),
+			Auth : GetAuthController(um, rm, tm),
 		} 
 	
 	return ctl
