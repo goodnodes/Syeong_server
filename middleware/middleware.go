@@ -4,7 +4,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	// "github.com/goodnodes/Syeong_server/controller"
-	jwt "github.com/dgrijalva/jwt-go"
+	jwt "github.com/golang-jwt/jwt/v4"
 	"github.com/goodnodes/Syeong_server/config"
 )
 
