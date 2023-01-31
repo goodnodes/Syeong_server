@@ -8,6 +8,7 @@ import (
 	"io"
 	"encoding/json"
 	"io/ioutil"
+	"github.com/goodnodes/Syeong_server/log"
 )
 
 type AuthController struct {
@@ -36,6 +37,7 @@ func (ac *AuthController) Login(c *gin.Context) {
 	user, err := ac.UserModel.FindUserByPnum(loginStruct.Pnum)
 	// 존재하지 않는 아이디.
 	if err != nil {
+		logger.Error(err)
 		c.JSON(401, gin.H{
 			"msg" : err.Error(), // no information
 		})
@@ -53,6 +55,7 @@ func (ac *AuthController) Login(c *gin.Context) {
 	err = util.PwdCompare(user.PrivateInfo.Password, loginStruct.Pwd)
 	// 비밀번호가 틀렸을 때
 	if err != nil {
+		logger.Error(err)
 		c.JSON(401, gin.H{
 			"err" : "invalid",
 		})
@@ -80,6 +83,7 @@ func (ac *AuthController) VerifyToken(c *gin.Context) {
 	// 여기서 검증이 안되면 에러 반환, 검증 이후 남은 유효기간이 7일 이하면 새 토큰이 발급되어있음
 	userId, nickName, err := util.VerifyRefreshToken(c)
 	if err != nil {
+		logger.Error(err)
 		c.JSON(401, gin.H {
 			"msg" : err.Error(),
 		})
@@ -144,6 +148,7 @@ func (ac *AuthController) CheckNumber(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&check)
 	if err != nil {
+		logger.Error(err)
 		panic(err)
 	}
 
@@ -191,6 +196,7 @@ func (ac *AuthController) SignUp(c *gin.Context) {
 	user := &model.User{}
 	err = c.ShouldBindJSON(user)
 	if err != nil {
+		logger.Error(err)
 		panic(err)
 	}
 
@@ -218,6 +224,7 @@ func (ac *AuthController) SignUp(c *gin.Context) {
 	// DB에 유저 정보를 넣어주자
 	id, err := ac.UserModel.AddUserData(user)
 	if err != nil {
+		logger.Error(err)
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})
@@ -257,7 +264,8 @@ func (ac *AuthController) DeleteUser(c *gin.Context) {
 		return
 	}
 
-	if len(reviews) > 0{
+	// 유저가 작성한 리뷰가 있을 경우에만 실행
+	if len(reviews) > 0 {
 		// 리뷰마다 돌며 태그로 카운트 된 숫자를 감소해준다.
 		for _, review := range reviews {
 			if len(review.KeywordReviews) == 0 {
@@ -270,6 +278,7 @@ func (ac *AuthController) DeleteUser(c *gin.Context) {
 		// 리뷰를 모두 지워준다.
 		err = ac.ReviewModel.DeleteMyReviews(userId)
 		if err != nil {
+			logger.Error(err)
 			c.JSON(400, gin.H{
 				"err" : err.Error(),
 			})
@@ -279,6 +288,7 @@ func (ac *AuthController) DeleteUser(c *gin.Context) {
 
 	err = ac.UserModel.DeleteMyAccount(userId)
 	if err != nil {
+		logger.Error(err)
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})
@@ -318,6 +328,7 @@ func (ac *AuthController) ChangePassword(c *gin.Context) {
 	err = ac.UserModel.ChangePassword(pnum, string(hashedPwd))
 
 	if err != nil {
+		logger.Error(err)
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})

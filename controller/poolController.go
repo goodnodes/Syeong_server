@@ -6,6 +6,7 @@ import (
 	"github.com/goodnodes/Syeong_server/util"
 	"github.com/gin-gonic/gin"
 	"github.com/goodnodes/Syeong_server/model"
+	"github.com/goodnodes/Syeong_server/log"
 )
 
 type PoolController struct {
@@ -31,6 +32,7 @@ func (pc *PoolController) InsertManyPool(c *gin.Context) {
 	err = pc.PoolModel.InsertManyPool(pools)
 
 	if err != nil {
+		logger.Error(err)
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})
@@ -52,6 +54,7 @@ func (pc *PoolController) ReplacePool(c *gin.Context) {
 	err = pc.PoolModel.ReplacePool(pool)
 	
 	if err != nil {
+		logger.Error(err)
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})
@@ -68,6 +71,7 @@ func (pc *PoolController) ReplacePool(c *gin.Context) {
 func (pc *PoolController) GetAll(c *gin.Context) {
 	pools, err := pc.PoolModel.GetAllPool()
 	if err != nil {
+		logger.Error(err)
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})
@@ -85,6 +89,7 @@ func (pc *PoolController) GetGEO(c *gin.Context) {
 	// 먼저 전체 수영장 정보를 가져온다
 	pools, err := pc.PoolModel.GetAllPool()
 	if err != nil {
+		logger.Error(err)
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})
@@ -103,6 +108,7 @@ func (pc *PoolController) GetGEO(c *gin.Context) {
 	}
 
 	if err != nil {
+		logger.Error(err)
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})

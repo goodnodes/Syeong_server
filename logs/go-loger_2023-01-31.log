@@ -1,0 +1,2 @@
+{"level":"DEBUG","time":"2023-01-31T13:45:55.339+0900","caller":"log/logger.go:50","msg":"debug","-":"ready server.... "}
+{"level":"INFO","time":"2023-01-31T13:45:56.152+0900","caller":"log/logger.go:113","msg":"/auth","status":401,"method":"POST","path":"/auth","query":"","ip":"::1","user-agent":"PostmanRuntime/7.30.0","errors":"","cost":0.023023666}

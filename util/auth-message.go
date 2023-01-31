@@ -12,6 +12,7 @@ import (
 	"encoding/base64"
 	"strconv"
 	"github.com/goodnodes/Syeong_server/config"
+	"github.com/goodnodes/Syeong_server/log"
 	// "github.com/goodnodes/Syeong_server/model"
 )
 
@@ -73,6 +74,7 @@ func SendMsg(pNum string) string {
 
 	req, err := http.NewRequest("POST", "https://sens.apigw.ntruss.com/sms/v2/services/" + serviceId + "/messages", buff)
 	if err != nil {
+		logger.Error(err)
 		panic(err)
 	}
 
@@ -86,12 +88,14 @@ func SendMsg(pNum string) string {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
+		logger.Error(err)
 		panic(err)
 	}
 	defer resp.Body.Close()
 
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		logger.Error(err)
 		panic(err)
 	}
 
@@ -107,6 +111,7 @@ func SendMsg(pNum string) string {
 func GetMsgId(requestId string) string {
 	req, err := http.NewRequest("GET", "https://sens.apigw.ntruss.com/sms/v2/services/" + serviceId + "/messages?requestId=" + requestId, nil)
 	if err != nil {
+		logger.Error(err)
 		panic(err)
 	}
 
@@ -120,12 +125,14 @@ func GetMsgId(requestId string) string {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
+		logger.Error(err)
 		panic(err)
 	}
 	defer resp.Body.Close()
 
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		logger.Error(err)
 		panic(err)
 	}
 
@@ -133,6 +140,7 @@ func GetMsgId(requestId string) string {
 
 	err = json.Unmarshal(respBody, &messageData)
 	if err != nil {
+		logger.Error(err)
 		panic(err)
 	}
 
@@ -147,6 +155,7 @@ func GetMsgId(requestId string) string {
 		messageId := messageData["messages"].([]interface{})[0].(map[string]interface{})["messageId"].(string)
 		return messageId
 	} else {
+		logger.Error(err)
 		panic(err)
 	}
 	// return messageData.Messages[0].MessageId
@@ -157,6 +166,7 @@ func GetMsgId(requestId string) string {
 func GetMsgContent(messageId string) string {
 	req, err := http.NewRequest("GET", "https://sens.apigw.ntruss.com/sms/v2/services/" + serviceId + "/messages/" + messageId, nil)
 	if err != nil {
+		logger.Error(err)
 		panic(err)
 	}
 
@@ -170,12 +180,14 @@ func GetMsgContent(messageId string) string {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
+		logger.Error(err)
 		panic(err)
 	}
 	defer resp.Body.Close()
 
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		logger.Error(err)
 		panic(err)
 	}
 

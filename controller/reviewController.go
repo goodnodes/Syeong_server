@@ -8,6 +8,7 @@ import (
 	"github.com/goodnodes/Syeong_server/util"
 	"github.com/gin-gonic/gin"
 	"github.com/goodnodes/Syeong_server/model"
+	"github.com/goodnodes/Syeong_server/log"
 )
 
 type ReviewController struct {
@@ -75,6 +76,7 @@ func (rc *ReviewController) GetUserReview(c *gin.Context) {
 	reviews, err := rc.ReviewModel.GetUserReview(userId)
 
 	if err != nil {
+		logger.Error(err)
 		c.JSON(400, gin.H{
 			"error" : err.Error(),
 		})
@@ -92,6 +94,7 @@ func (rc *ReviewController) GetPoolReview(c *gin.Context) {
 	poolId := util.StringToObjectId(c.Query("poolid"))
 	reviews, err := rc.ReviewModel.GetPoolReview(poolId)
 	if err != nil {
+		logger.Error(err)
 		c.JSON(400, gin.H{
 			"error" : err.Error(),
 		})
@@ -101,6 +104,7 @@ func (rc *ReviewController) GetPoolReview(c *gin.Context) {
 	// 동시에 top tag도 계산하여 리턴해줌
 	topTags, err := rc.TagsModel.GetTopTags(poolId)
 	if err != nil {
+		logger.Error(err)
 		c.JSON(400, gin.H{
 			"error" : err.Error(),
 		})
@@ -136,6 +140,7 @@ func (rc *ReviewController) UpdateReview(c *gin.Context) {
 		decTagsArr := util.GetDecTags(reviews[0].KeywordReviews...)
 		err := rc.TagsModel.UpdateTagsCount(reviews[0].PoolId, decTagsArr)
 		if err != nil {
+			logger.Error(err)
 			c.JSON(500, gin.H{
 				"err" : err.Error(),
 			})
@@ -151,6 +156,7 @@ func (rc *ReviewController) UpdateReview(c *gin.Context) {
 		incTagsArr := util.GetIncTags(reviews[1].KeywordReviews...)
 		err := rc.TagsModel.UpdateTagsCount(reviews[1].PoolId, incTagsArr)
 		if err != nil {
+			logger.Error(err)
 			c.JSON(500, gin.H{
 				"err" : err.Error(),
 			})
@@ -166,6 +172,7 @@ func (rc *ReviewController) UpdateReview(c *gin.Context) {
 
 	err := rc.ReviewModel.UpdateReview(&reviews[1])
 	if err != nil {
+		logger.Error(err)
 		c.JSON(400, gin.H{
 			"error" : err.Error(),
 		})
@@ -195,6 +202,7 @@ func (rc *ReviewController) DeleteReview(c *gin.Context) {
 	// 먼저 리뷰 아이디를 가지고 리뷰를 가져온다.
 	review, err := rc.ReviewModel.GetOneReview(util.StringToObjectId(reviewId))
 	if err != nil {
+		logger.Error(err)
 		c.JSON(400, gin.H{
 			"error" : err.Error(),
 		})
@@ -204,6 +212,7 @@ func (rc *ReviewController) DeleteReview(c *gin.Context) {
 	decTagsArr := util.GetDecTags(review.KeywordReviews...)
 	err = rc.TagsModel.UpdateTagsCount(review.PoolId, decTagsArr)
 	if err != nil {
+		logger.Error(err)
 		c.JSON(400, gin.H{
 			"error" : err.Error(),
 		})
@@ -215,6 +224,7 @@ func (rc *ReviewController) DeleteReview(c *gin.Context) {
 	err = rc.ReviewModel.DeleteReview(util.StringToObjectId(reviewId))
 
 	if err != nil {
+		logger.Error(err)
 		c.JSON(400, gin.H{
 			"error" : err.Error(),
 		})
