@@ -27,12 +27,7 @@ func (p *Router) Idx() *gin.Engine {
 	// swagger route 추가 필요
 
 	authGroup := r.Group("/auth")
-	{
-		// 여기 이제 해야 한다. 문자 메시지를 보내는 방법 추가했음
-		// 전화번호를 받으면, 이를 대상으로 랜덤한 숫자 메일을 보낸다. -> 이를 임시저장해야 한다.
-		// 임시저장한 번호가 일치하면 이후 로직 가능, 다르면 임시저장 파일 삭제하고 abort
-		// 시간 단위로 문자를 보낼때의 시간도 같이 저장해놨다가 시간이 오바되면 거절하는 로직도 추가해야함
-		
+	{		
 		// 번호인증 요청 -> 여기를 통해 회원가입/비밀번호 변경시 메시지를 요청한다.
 		authGroup.POST("/request", p.ctl.Auth.RequestNumber)
 		// 번호인증 확인 -> 여기를 통해 코드 입력값을 확인한다.
@@ -69,8 +64,6 @@ func (p *Router) Idx() *gin.Engine {
 	{
 		// 전체 수영장 정보 가져오기
 		poolGroup.GET("", p.ctl.Pool.GetAll)
-		// 수영장별 리뷰 가져오기
-	// 	poolGroup.GET("/:poolid", p.ctl.Pool ...)
 	}
 
 	reviewGroup := r.Group("/review").Use(middleware.VerifyAccessToken())
