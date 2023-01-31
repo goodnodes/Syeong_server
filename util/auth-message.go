@@ -57,7 +57,7 @@ func SendMsg(pNum string) string {
 
 	sms := SMS {
 		Type : "SMS",
-		From : "01064853201",
+		From : "01083041394",
 		Content : "셩 인증번호\n" + strconv.Itoa(random),
 		Messages : []struct {
 			To string `json:"to"`
