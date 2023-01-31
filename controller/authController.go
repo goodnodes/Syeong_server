@@ -67,6 +67,7 @@ func (ac *AuthController) Login(c *gin.Context) {
 	// 이 때 Token의 claims에 들어가는 id는 실제 id가 아닌 db ObjectId로 할 것이다.
 	accessToken := util.GetAccessToken(user.ID.Hex(), user.PrivateInfo.NickName)
 	refreshToken := util.GetRefreshToken(user.ID.Hex(), user.PrivateInfo.NickName)
+	fmt.Println(c.ClientIP())
 	c.SetCookie("access-token", accessToken, 60*60*24, "/", c.ClientIP(), false, true)
 	// c.SetCookie("access-token", accessToken, 10, "/", "localhost", false, true)
 	// 여기는 리프레시토큰을 넣어줘야지
