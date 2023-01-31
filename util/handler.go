@@ -6,7 +6,7 @@ import (
 
 func ErrorHandler (err error) {
 	if err != nil {
-		logger.Error(err)
+		logger.Error(err.Error())
 		panic(err)
 	}
 }

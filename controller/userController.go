@@ -35,7 +35,7 @@ func(uc *UserController) AddMyPool(c *gin.Context) {
 	err := uc.UserModel.AddMyPool(userId, poolId)
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error(err.Error())
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})
@@ -58,7 +58,7 @@ func(uc *UserController) DeleteMyPool(c *gin.Context) {
 	err := uc.UserModel.DeleteMyPool(userId, poolId)
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error(err.Error())
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})
@@ -111,7 +111,7 @@ func(uc *UserController) EditMyInfo(c *gin.Context) {
 		err = uc.UserModel.EditMyGoal(goal, userId)
 
 		if err != nil {
-			logger.Error(err)
+			logger.Error(err.Error())
 			c.JSON(400, gin.H{
 				"err" : err.Error(),
 			})
@@ -137,7 +137,7 @@ func(uc *UserController) EditMyInfo(c *gin.Context) {
 	// 닉네임 변경하고 goal도 변경해줌
 	err = uc.UserModel.EditMyNickName(userId, newNickName)
 	if err != nil {
-		logger.Error(err)
+		logger.Error(err.Error())
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})
@@ -145,7 +145,7 @@ func(uc *UserController) EditMyInfo(c *gin.Context) {
 	}
 	err = uc.UserModel.EditMyGoal(goal, userId)
 	if err != nil {
-		logger.Error(err)
+		logger.Error(err.Error())
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})

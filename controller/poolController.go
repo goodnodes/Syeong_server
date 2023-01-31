@@ -32,7 +32,7 @@ func (pc *PoolController) InsertManyPool(c *gin.Context) {
 	err = pc.PoolModel.InsertManyPool(pools)
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error(err.Error())
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})
@@ -54,7 +54,7 @@ func (pc *PoolController) ReplacePool(c *gin.Context) {
 	err = pc.PoolModel.ReplacePool(pool)
 	
 	if err != nil {
-		logger.Error(err)
+		logger.Error(err.Error())
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})
@@ -71,7 +71,7 @@ func (pc *PoolController) ReplacePool(c *gin.Context) {
 func (pc *PoolController) GetAll(c *gin.Context) {
 	pools, err := pc.PoolModel.GetAllPool()
 	if err != nil {
-		logger.Error(err)
+		logger.Error(err.Error())
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})
@@ -89,7 +89,7 @@ func (pc *PoolController) GetGEO(c *gin.Context) {
 	// 먼저 전체 수영장 정보를 가져온다
 	pools, err := pc.PoolModel.GetAllPool()
 	if err != nil {
-		logger.Error(err)
+		logger.Error(err.Error())
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})
@@ -103,12 +103,13 @@ func (pc *PoolController) GetGEO(c *gin.Context) {
 		geo := util.GetGEO(value.Address)
 		err = pc.PoolModel.UpdateGEO(value.ID, geo)
 		if err != nil {
+			logger.Error(err.Error())
 			break
 		}
 	}
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error(err.Error())
 		c.JSON(400, gin.H{
 			"err" : err.Error(),
 		})
