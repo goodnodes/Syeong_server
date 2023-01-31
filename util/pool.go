@@ -21,8 +21,6 @@ func GetGEO(address string) *model.GEO {
 		panic(err)
 	}
 
-	fmt.Println(address)
-
 	req.Header.Set("X-NCP-APIGW-API-KEY-ID", ID)
 	req.Header.Set("X-NCP-APIGW-API-KEY", PWD)
 
@@ -33,11 +31,13 @@ func GetGEO(address string) *model.GEO {
 
 	respBody, err := ioutil.ReadAll(resp.Body)
 	ErrorHandler(err)
-
+	
 	var data map[string]interface{}
-
+	
 	err = json.Unmarshal(respBody, &data)
-	logger.Error(err.Error())
+	if err != nil{
+		logger.Error(err.Error())
+	}
 
 	latitude := data["addresses"].([]interface{})[0].(map[string]interface{})["y"].(string)
 	longitude := data["addresses"].([]interface{})[0].(map[string]interface{})["x"].(string)
