@@ -12,6 +12,14 @@ type Config struct {
 		Serviceid string
 	}
 
+	Log struct {
+		Level string
+		Fpath string
+		Msize int
+		Mage int
+		Mbackup int
+	}
+
 	GEO struct {
 		Clientid string
 		Clientsecret string

@@ -4,6 +4,7 @@ import (
 	"github.com/goodnodes/Syeong_server/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/goodnodes/Syeong_server/controller"
+	"github.com/goodnodes/Syeong_server/log"
 )
 
 type Router struct {
@@ -19,8 +20,8 @@ func GetRouter(ctl *controller.Controller) *Router {
 func (p *Router) Idx() *gin.Engine {
 	r := gin.New()
 
-	// logger 미들웨어 추가 필요
-	// recovery 미들웨어 추가 필요
+	r.Use(logger.GinLogger())
+	r.Use(logger.GinRecovery(true))
 	r.Use(middleware.CORS())
 
 	// swagger route 추가 필요

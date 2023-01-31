@@ -36,7 +36,7 @@ func InitLogger(cfg *conf.Config) (err error) {
 	core := zapcore.NewCore(encoder, writeSyncer, l)
 	// lg 생성
 	lg = zap.New(core, zap.AddCaller())
-	zap.ReplaceGlobals(lg) // 얘는 왜있는걸까?
+	zap.ReplaceGlobals(lg)
 	return
 }
 

@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"time"
 	"net/http"
 	"github.com/goodnodes/Syeong_server/model"
 	"github.com/goodnodes/Syeong_server/controller"
 	"github.com/goodnodes/Syeong_server/route"
 	"github.com/goodnodes/Syeong_server/config"
+	"github.com/goodnodes/Syeong_server/log"
 )
 
 var cfg = config.GetConfig("config/config.toml")
@@ -23,8 +25,12 @@ func main() {
 	tagsModel := cfg.DB["tags"]["model"]
 
 	// logger 설정 추가 필요
+	if err := logger.InitLogger(cfg); err != nil {
+		fmt.Printf("init logger failed, err: %v\n", err)
+		return
+	}
 
-	// 원래는 환경변수를 config.toml 파일에서 받아와야 함
+	logger.Debug("ready server....")
 
 	um, err := model.GetUserModel(dbName, host, userModel)
 	if err != nil {
