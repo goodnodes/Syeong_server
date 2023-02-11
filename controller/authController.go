@@ -117,7 +117,7 @@ func (ac *AuthController) RequestNumber(c *gin.Context) {
 	if pnum == "01012345678" {
 		c.JSON(200, gin.H{
 			"requestId" : "",
-			"requestTime" : "",
+			"requestTime" : 0,
 		})
 		return
 	}
