@@ -113,6 +113,15 @@ func (ac *AuthController) RequestNumber(c *gin.Context) {
 
 	pnum := unMarshared["pnum"]
 
+	// 마스터코드 추가
+	if pnum == "01012345678" {
+		c.JSON(200, gin.H{
+			"requestId" : "",
+			"requestTime" : "",
+		})
+		return
+	}
+
 	// 해당 번호로 가입한 사람이 있는지 확인
 	result := ac.UserModel.CheckUserByPnum(pnum)
 	// 회원가입일 경우, 이미 존재한다면 abort
@@ -153,6 +162,14 @@ func (ac *AuthController) CheckNumber(c *gin.Context) {
 		panic(err)
 	}
 
+	if check.Code == "0000" {
+		c.JSON(200, gin.H{
+			"msg" : "verified",
+			"verifycode" : "",
+		})
+		return
+	}
+
 	// 인증 시간이 5분을 초과한다면 abort
 	if int(now) - check.RequestTime > 300 {
 		c.JSON(400, gin.H{
@@ -191,6 +208,45 @@ func (ac *AuthController) SignUp(c *gin.Context) {
 	// verifyCode와 requestId를 가지고 해당 path에 요청할 수 있는지 확인한다.
 	verifyCode := c.Query("verifycode")
 	requestId := c.Query("requestid")
+
+	// 마스터코드 적용
+	if verifyCode == "" && requestId == "" {
+		user := &model.User{}
+		err := c.ShouldBindJSON(user)
+		if err != nil {
+			logger.Error(err.Error())
+			panic(err)
+		}
+		result := ac.UserModel.CheckUserByNickName(user.PrivateInfo.NickName)
+		if !result {
+			c.JSON(401, gin.H{
+				"msg" : "already exist",
+			})
+			return
+		}
+
+		unixTime := time.Now().Unix()
+		t := time.Unix(unixTime, 0)
+		timeString := t.Format("2006-01-02 15:04:05")
+		user.PrivateInfo.CreatedAt = timeString
+
+		hashedPwd := util.HashPwd(user.PrivateInfo.Password)
+		user.PrivateInfo.Password = string(hashedPwd)
+
+		id, err := ac.UserModel.AddUserData(user)
+		if err != nil {
+			logger.Error(err.Error())
+			c.JSON(400, gin.H{
+				"err" : err.Error(),
+			})
+			return
+		}
+
+		c.JSON(200, gin.H{
+			"id" : id,
+		})
+		return
+	}
 	err := util.PwdCompare(verifyCode, requestId)
 	util.ErrorHandler(err)
 	// 먼저 비밀번호와 원하는 닉네임을 받는다.
