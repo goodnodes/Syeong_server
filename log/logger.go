@@ -104,6 +104,9 @@ func getLogWriter(filename string, maxSize, maxBackup, maxAge int) zapcore.Write
 // gin 로거 대체 설정
 func GinLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if c.Request.UserAgent() == "ELB-HealthChecker/2.0" {
+			c.Abort()
+		}
 		start := time.Now()
 		path := c.Request.URL.Path
 		query := c.Request.URL.RawQuery
