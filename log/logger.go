@@ -106,6 +106,7 @@ func GinLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.Request.UserAgent() == "ELB-HealthChecker/2.0" {
 			c.Abort()
+			return
 		}
 		start := time.Now()
 		path := c.Request.URL.Path

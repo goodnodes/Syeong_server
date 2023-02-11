@@ -11,7 +11,7 @@ COPY . ./
 
 RUN go mod tidy
 
-# ENTRYPOINT [ "go", "run", "main.go" ]
+CMD ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
 # RUN go build -o main .
 
