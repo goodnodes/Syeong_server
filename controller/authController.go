@@ -114,7 +114,7 @@ func (ac *AuthController) RequestNumber(c *gin.Context) {
 	pnum := unMarshared["pnum"]
 
 	// 마스터코드 추가
-	if pnum == "01012345678" {
+	if pnum == "01012345678" || pnum == "01087654321" {
 		c.JSON(200, gin.H{
 			"requestId" : "",
 			"requestTime" : 0,
@@ -162,7 +162,7 @@ func (ac *AuthController) CheckNumber(c *gin.Context) {
 		panic(err)
 	}
 
-	if check.Code == "0000" {
+	if check.Code == "0000" {  
 		c.JSON(200, gin.H{
 			"msg" : "verified",
 			"verifycode" : "",
