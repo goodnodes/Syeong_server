@@ -73,6 +73,7 @@ func (pm *PoolModel) ReplacePool(pool *Pool) error {
 	return nil
 }
 
+// 모든 수영장 정보를 가져오는 메서드
 func(pm *PoolModel) GetAllPool() ([]Pool, error) {
 	filter := bson.D{{}}
 	cursor, err := pm.PoolCollection.Find(context.TODO(), filter)
@@ -87,6 +88,17 @@ func(pm *PoolModel) GetAllPool() ([]Pool, error) {
 
 	return pools, nil
 }
+
+// 수영장 정보를 하나만 가져오는 메서드
+func(pm *PoolModel) GetOnePool(name string) (Pool, error) {
+	pool := Pool{}
+	filter := bson.D{{Key : "name", Value : name}}
+
+	err := pm.PoolCollection.FindOne(context.TODO(), filter).Decode(&pool)
+
+	return pool, err
+}
+
 
 
 // admin -> geo code 추가하는 메서드
