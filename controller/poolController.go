@@ -124,3 +124,32 @@ func (pc *PoolController) GetGEO(c *gin.Context) {
 		"msg" : "geo success",
 	})
 }
+
+
+// 하나의 GEO코드만 가져오는 메서드
+func (pc *PoolController) GetOneGEO(c *gin.Context) {
+	name := c.Query("name")
+	// 먼저 전체 수영장 정보를 가져온다
+	pool, err := pc.PoolModel.GetOnePool(name)
+	if err != nil {
+		logger.Error(err.Error())
+		c.JSON(400, gin.H{
+			"err" : err.Error(),
+		})
+		return
+	}
+
+	geo := util.GetGEO(pool.Address)
+	err = pc.PoolModel.UpdateGEO(pool.ID, geo)
+	if err != nil {
+		logger.Error(err.Error())
+		c.JSON(400, gin.H{
+			"err" : err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"msg" : name + "geo success",
+	})
+}
