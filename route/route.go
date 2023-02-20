@@ -60,10 +60,12 @@ func (p *Router) Idx() *gin.Engine {
 		userGroup.DELETE("", p.ctl.Auth.DeleteUser)
 	}
 
-	poolGroup := r.Group("/pool").Use(middleware.VerifyAccessToken())
+	poolGroup := r.Group("/pool")
 	{
 		// 전체 수영장 정보 가져오기
 		poolGroup.GET("", p.ctl.Pool.GetAll)
+		// 수영장별 리뷰 가져오기
+		poolGroup.GET("/review", p.ctl.Review.GetPoolReview)
 	}
 
 	reviewGroup := r.Group("/review").Use(middleware.VerifyAccessToken())
@@ -72,8 +74,6 @@ func (p *Router) Idx() *gin.Engine {
 		reviewGroup.POST("", p.ctl.Review.AddReview)
 		// 유저가 작성한 리뷰 가져오기
 		reviewGroup.GET("/user", p.ctl.Review.GetUserReview)
-		// 수영장별 리뷰 가져오기
-		reviewGroup.GET("/pool", p.ctl.Review.GetPoolReview)
 		// 리뷰 수정하기
 		reviewGroup.PATCH("", p.ctl.Review.UpdateReview)
 		// 리뷰 삭제하기
