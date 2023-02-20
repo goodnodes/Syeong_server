@@ -16,7 +16,7 @@ services:
       - 27017:27017
     volumes:
       - ./docker/mongo/data/db:/data/db
-  # mongo-seed:
-  #   build: ./mongo-seed
-  #   depends_on:
-  #     - mongodb
+  mongo-seed:
+    build: ./mongo-seed
+    depends_on:
+      - mongodb

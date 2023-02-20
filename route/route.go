@@ -89,6 +89,8 @@ func (p *Router) Idx() *gin.Engine {
 		adminGroup.PATCH("", p.ctl.Pool.ReplacePool)
 		// DB에 geo code 업데이트하는 메서드
 		adminGroup.GET("", p.ctl.Pool.GetGEO)
+		// geo code 하나만 업데이트 하는 메서드
+		adminGroup.GET("/one", p.ctl.Pool.GetOneGEO)
 	}
 
 	return r
